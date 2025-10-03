@@ -93,8 +93,8 @@
         let polygonDiv;
 
         function adjustFontSize(element, value) {
-            // 桁数に応じてフォントサイズを調整
-            let length = String(value).length;
+            // formatNumberを使うように修正
+            let length = String(formatNumber(value)).length;
             let baseSize = 3; // rem
             let size = baseSize;
             if (length >= 7) size = 1.5;
@@ -120,7 +120,7 @@
             polygon.style.background = isMini
                 ? `hsl(${200 + sides * 20}, 70%, 80%)`
                 : `hsl(${200 + sides * 20}, 70%, 55%)`;
-            polygon.textContent = count;
+            polygon.textContent = formatNumber(count); // ←ここを修正
             adjustFontSize(polygon, count);
 
             // サイズ調整（ミニの場合は3分の1）
@@ -148,7 +148,7 @@
             if (isMini) {
                 polygon.addEventListener('click', function(e) {
                     count += miniClickValue;
-                    polygon.textContent = count;
+                    polygon.textContent = formatNumber(count); // ←ここを修正
                     adjustFontSize(polygon, count);
                     totalCount += miniClickValue;
                     updateTotalCounter();
@@ -164,20 +164,20 @@
 
         function updatePolygonValue() {
             const polygon = polygonDiv.querySelector('.polygon');
-            polygon.textContent = count;
-            adjustFontSize(polygon, count); // 追加
+            polygon.textContent = formatNumber(count); // ←ここを修正
+            adjustFontSize(polygon, count);
         }
 
         function updateTotalCounter() {
-            totalCounter.textContent = `所持金: ${totalCount}`;
+            totalCounter.textContent = `所持金: ${formatNumber(totalCount)}`; // ←ここを修正
         }
         function updateEvolveBtn() {
             evolveBtn.disabled = totalCount < evolveCost;
-            evolveCostText.textContent = evolveCost;
+            evolveCostText.textContent = formatNumber(evolveCost); // ←ここを修正
         }
         function updatePowerupBtn() {
             powerupBtn.disabled = totalCount < powerupCost;
-            powerupCostText.textContent = powerupCost;
+            powerupCostText.textContent = formatNumber(powerupCost); // ←ここを修正
             powerupLevelText.textContent = powerupLevel;
         }
 
@@ -275,6 +275,28 @@
         updatePowerupBtn();
 
         polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
+
+        function formatNumber(num) {
+            // 拡張SI接頭語表記（最大で1e30まで対応）
+            const SI = [
+                { value: 1e30, symbol: "Q" }, // クエッタ (quetta)
+                { value: 1e27, symbol: "R" }, // ロナ (ronna)
+                { value: 1e24, symbol: "Y" }, // ヨタ (yotta)
+                { value: 1e21, symbol: "Z" }, // ゼタ (zetta)
+                { value: 1e18, symbol: "E" }, // エクサ (exa)
+                { value: 1e15, symbol: "P" }, // ペタ (peta)
+                { value: 1e12, symbol: "T" }, // テラ (tera)
+                { value: 1e9,  symbol: "G" }, // ギガ (giga)
+                { value: 1e6,  symbol: "M" }, // メガ (mega)
+                { value: 1e3,  symbol: "k" }  // キロ (kilo)
+            ];
+            for (let i = 0; i < SI.length; i++) {
+                if (num >= SI[i].value) {
+                    return (num / SI[i].value).toFixed(2) + SI[i].symbol;
+                }
+            }
+            return num.toString();
+        }
     </script>
 </body>
 </html>
