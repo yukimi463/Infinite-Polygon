@@ -103,13 +103,13 @@
             element.style.fontSize = size + "rem";
         }
 
-        function createPolygon(sides, count) {
+        function createPolygon(sides, count, isMini = false, miniClickValue = 1) {
             const wrapper = document.createElement('div');
             wrapper.className = 'polygon-wrapper';
 
             const name = document.createElement('div');
             name.className = 'polygon-name';
-            name.textContent = `正${sides}角形`;
+            name.textContent = isMini ? `正${sides}角形(ミニ)` : `正${sides}角形`;
             wrapper.appendChild(name);
 
             const { clipPath, coords } = getPolygonPoints(sides);
@@ -117,19 +117,47 @@
             const polygon = document.createElement('div');
             polygon.className = 'polygon';
             polygon.style.clipPath = clipPath;
-            polygon.style.background = `hsl(${200 + sides * 20}, 70%, 55%)`;
+            polygon.style.background = isMini
+                ? `hsl(${200 + sides * 20}, 70%, 80%)`
+                : `hsl(${200 + sides * 20}, 70%, 55%)`;
             polygon.textContent = count;
-            adjustFontSize(polygon, count); // 追加
+            adjustFontSize(polygon, count);
+
+            // サイズ調整（ミニの場合は3分の1）
+            if (isMini) {
+                polygon.style.width = "66px";
+                polygon.style.height = "66px";
+                polygon.style.fontSize = "1rem";
+                wrapper.style.width = "86px";
+                wrapper.style.height = "86px";
+                name.style.fontSize = "0.7rem";
+                name.style.marginBottom = "4px";
+            }
 
             wrapper.appendChild(polygon);
 
             coords.forEach(pt => {
                 const dot = document.createElement('div');
                 dot.className = 'vertex-dot';
-                dot.style.left = `${pt.x * 2}px`;
-                dot.style.top = `${pt.y * 2}px`;
+                dot.style.left = isMini ? `${pt.x * 0.66}px` : `${pt.x * 2}px`;
+                dot.style.top = isMini ? `${pt.y * 0.66}px` : `${pt.y * 2}px`;
                 polygon.appendChild(dot);
             });
+
+            // ミニ多角形のクリックイベント
+            if (isMini) {
+                polygon.addEventListener('click', function(e) {
+                    count += miniClickValue;
+                    polygon.textContent = count;
+                    adjustFontSize(polygon, count);
+                    totalCount += miniClickValue;
+                    updateTotalCounter();
+                    updateEvolveBtn();
+                    updatePowerupBtn();
+                    checkAutoUnlock();
+                    e.stopPropagation();
+                });
+            }
 
             return wrapper;
         }
@@ -153,14 +181,37 @@
             powerupLevelText.textContent = powerupLevel;
         }
 
+        let miniUnlock = false; // ミニ生成解放フラグ
+
         function handleClick() {
             count += clickValue;
             totalCount += clickValue;
-            updatePolygonValue(); // 変更
+            updatePolygonValue();
             updateTotalCounter();
             updateEvolveBtn();
             updatePowerupBtn();
             checkAutoUnlock();
+            checkMiniUnlock(); // ←追加
+
+            // ミニ生成機能が解放されていれば生成
+            if (miniUnlock && Math.random() < 0.01) {
+                const miniDiv = createPolygon(
+                    sides,
+                    0,
+                    true,
+                    Math.max(1, Math.floor(clickValue / 3))
+                );
+                gameWrapper.appendChild(miniDiv);
+            }
+        }
+
+        // 所持金でミニ解放判定
+        function checkMiniUnlock() {
+            if (!miniUnlock && totalCount >= 1000) {
+                miniUnlock = true;
+                // 必要なら通知など追加
+                alert("ミニ正n角形生成機能が解放されました！");
+            }
         }
 
         function autoCount() {
