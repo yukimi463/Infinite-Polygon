@@ -6,6 +6,7 @@
     </div>
     <div style="margin-top:24px;">
         <button id="evolveBtn" class="auto-btn" disabled>進化する（コスト: <span id="evolveCostText">10</span>）</button>
+        <button id="powerupBtn" class="auto-btn" disabled>強化する（Lv.<span id="powerupLevelText">0</span> コスト: <span id="powerupCostText">1</span>）</button>
         <button id="autoBtn" class="auto-btn" disabled>オートカウント（所持金100で解放）</button>
     </div>
     <style>
@@ -71,18 +72,36 @@
 
         let sides = 3;
         let count = 0;
-        let totalCount = 0; // 通貨として利用
+        let totalCount = 0; // 通貨
         let clickValue = 1;
         let evolveCost = 10;
         let autoCounting = false;
         let autoInterval = null;
+
+        // 強化関連
+        let powerupLevel = 0;
+        let powerupCost = Math.floor(evolveCost / 10);
 
         const gameWrapper = document.getElementById('gameWrapper');
         const totalCounter = document.getElementById('totalCounter');
         const autoBtn = document.getElementById('autoBtn');
         const evolveBtn = document.getElementById('evolveBtn');
         const evolveCostText = document.getElementById('evolveCostText');
+        const powerupBtn = document.getElementById('powerupBtn');
+        const powerupCostText = document.getElementById('powerupCostText');
+        const powerupLevelText = document.getElementById('powerupLevelText');
         let polygonDiv;
+
+        function adjustFontSize(element, value) {
+            // 桁数に応じてフォントサイズを調整
+            let length = String(value).length;
+            let baseSize = 3; // rem
+            let size = baseSize;
+            if (length >= 7) size = 1.5;
+            else if (length >= 5) size = 2;
+            else if (length >= 3) size = 2.5;
+            element.style.fontSize = size + "rem";
+        }
 
         function createPolygon(sides, count) {
             const wrapper = document.createElement('div');
@@ -100,6 +119,7 @@
             polygon.style.clipPath = clipPath;
             polygon.style.background = `hsl(${200 + sides * 20}, 70%, 55%)`;
             polygon.textContent = count;
+            adjustFontSize(polygon, count); // 追加
 
             wrapper.appendChild(polygon);
 
@@ -114,6 +134,12 @@
             return wrapper;
         }
 
+        function updatePolygonValue() {
+            const polygon = polygonDiv.querySelector('.polygon');
+            polygon.textContent = count;
+            adjustFontSize(polygon, count); // 追加
+        }
+
         function updateTotalCounter() {
             totalCounter.textContent = `所持金: ${totalCount}`;
         }
@@ -121,13 +147,19 @@
             evolveBtn.disabled = totalCount < evolveCost;
             evolveCostText.textContent = evolveCost;
         }
+        function updatePowerupBtn() {
+            powerupBtn.disabled = totalCount < powerupCost;
+            powerupCostText.textContent = powerupCost;
+            powerupLevelText.textContent = powerupLevel;
+        }
 
         function handleClick() {
             count += clickValue;
             totalCount += clickValue;
-            polygonDiv.querySelector('.polygon').textContent = count;
+            updatePolygonValue(); // 変更
             updateTotalCounter();
             updateEvolveBtn();
+            updatePowerupBtn();
             checkAutoUnlock();
         }
 
@@ -159,14 +191,28 @@
             if (totalCount >= evolveCost) {
                 sides++;
                 clickValue *= 2;
-                totalCount -= evolveCost; // コストを所持金から減算
+                totalCount -= evolveCost;
                 count = 0;
                 evolveCost *= 10;
+                powerupCost = Math.floor(evolveCost / 10); // 強化コストも更新
                 const newPolygon = createPolygon(sides, count);
                 gameWrapper.replaceChild(newPolygon, polygonDiv);
                 polygonDiv = newPolygon;
                 polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
                 updateTotalCounter();
+                updateEvolveBtn();
+                updatePowerupBtn();
+            }
+        });
+
+        powerupBtn.addEventListener('click', function() {
+            if (totalCount >= powerupCost) {
+                powerupLevel++;
+                totalCount -= powerupCost;
+                clickValue = Math.floor(clickValue * 1.5);
+                powerupCost = Math.floor(powerupCost * 1.1);
+                updateTotalCounter();
+                updatePowerupBtn();
                 updateEvolveBtn();
             }
         });
@@ -175,6 +221,7 @@
         gameWrapper.appendChild(polygonDiv);
         updateTotalCounter();
         updateEvolveBtn();
+        updatePowerupBtn();
 
         polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
     </script>
