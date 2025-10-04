@@ -208,14 +208,47 @@
         function updateRainbowBtn() {
             rainbowBtn.disabled = totalCount < rainbowCost || miniPolygons.length === 0;
             rainbowCostText.textContent = formatNumber(rainbowCost);
+            if (rainbowBtn.disabled) {
+                console.log("虹色変色ボタン未解放: 所持金", totalCount, "ミニ多角形数", miniPolygons.length);
+            } else {
+                console.log("虹色変色ボタン解放: 所持金", totalCount, "ミニ多角形数", miniPolygons.length);
+            }
         }
 
         let miniUnlock = false; // ミニ生成解放フラグ
+        let polyhedronUnlock = false; // 多面体解放フラグ
+
+        function checkMiniUnlock() {
+            if (!miniUnlock && totalCount >= 1000) {
+                miniUnlock = true;
+                // 必要なら通知など追加
+                alert("ミニ正n角形生成機能が解放されました！");
+            }
+        }
+
+        function checkPolyhedronUnlock() {
+            // 1Gg = 1e100
+            if (!polyhedronUnlock && totalCount >= 1e100) {
+                polyhedronUnlock = true;
+                alert("次元拡張！正多面体が解放されました！");
+                updateEvolveBtn(); // ボタン状態更新
+            }
+        }
+
+        // オートカウント解放判定関数（コンソール出力追加）
+function checkAutoUnlock() {
+    if (totalCount >= 100) {
+        autoBtn.disabled = false;
+        console.log("オートカウント解放: 所持金", totalCount);
+    } else {
+        autoBtn.disabled = true;
+        console.log("オートカウント未解放: 所持金", totalCount);
+    }
+}
 
         function handleClick() {
             count += clickValue;
             totalCount += clickValue;
-            console.log("count:", count, "totalCount:", totalCount); // ←追加
             updatePolygonValue();
             updateMiniPolygonValues();
             updateTotalCounter();
@@ -223,8 +256,7 @@
             updatePowerupBtn();
             checkAutoUnlock();
             checkMiniUnlock();
-
-            // ミニ生成機能が解放されていれば生成
+            checkPolyhedronUnlock(); // ←追加
             if (miniUnlock && Math.random() < 0.01) {
                 const miniDiv = createPolygon(
                     sides,
@@ -236,57 +268,45 @@
             }
         }
 
-        // 所持金でミニ解放判定
-        function checkMiniUnlock() {
-            if (!miniUnlock && totalCount >= 1000) {
-                miniUnlock = true;
-                // 必要なら通知など追加
-                alert("ミニ正n角形生成機能が解放されました！");
-            }
-        }
-
         function autoCount() {
-            // メイン多角形のカウント
             count += clickValue;
             totalCount += clickValue;
             updatePolygonValue();
-
-            // ミニ多角形も自動カウント
             miniPolygons.forEach(obj => {
-                obj._countObj.value += obj.clickValue; // ← ここで値を加算
+                obj._countObj.value += obj.clickValue;
                 obj.polygon.textContent = formatNumber(obj._countObj.value);
                 adjustFontSize(obj.polygon, obj._countObj.value, true);
                 totalCount += obj.clickValue;
             });
-
             updateMiniPolygonValues();
             updateTotalCounter();
             updateEvolveBtn();
             updatePowerupBtn();
             checkAutoUnlock();
-        }
-
-        // オートカウント解放判定
-        function checkAutoUnlock() {
-            if (totalCount >= 100 && autoBtn.disabled) {
-                autoBtn.disabled = false;
-                autoBtn.textContent = "オートカウントON";
-            }
+            checkPolyhedronUnlock(); // ←追加
         }
 
         evolveBtn.addEventListener('click', function() {
             if (totalCount >= evolveCost) {
-                sides++;
-                clickValue *= 2;
-                totalCount -= evolveCost;
-                count = 0;
-                evolveCost *= 10;
-                powerupCost = Math.floor(evolveCost / 10); // 強化コストも更新
-                rainbowCost = evolveCost; // 虹色コストも進化コストと同じ
-                const newPolygon = createPolygon(sides, count);
-                gameWrapper.replaceChild(newPolygon, polygonDiv);
-                polygonDiv = newPolygon;
-                polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
+                if (polyhedronUnlock) {
+                    // 1Gg到達後は多面体へ
+                    const polyType = (count % 2 === 0) ? "立方体" : "正八面体";
+                    const polyDiv = createPolyhedron(polyType, totalCount);
+                    gameWrapper.replaceChild(polyDiv, polygonDiv);
+                    polygonDiv = polyDiv;
+                } else {
+                    sides++;
+                    clickValue *= 2;
+                    totalCount -= evolveCost;
+                    count = 0;
+                    evolveCost *= 10;
+                    powerupCost = Math.floor(evolveCost / 10); // 強化コストも更新
+                    rainbowCost = evolveCost; // 虹色コストも進化コストと同じ
+                    const newPolygon = createPolygon(sides, count);
+                    gameWrapper.replaceChild(newPolygon, polygonDiv);
+                    polygonDiv = newPolygon;
+                    polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
+                }
                 updateTotalCounter();
                 updateEvolveBtn();
                 updatePowerupBtn();
@@ -389,6 +409,106 @@
             return num.toString();
         }
 
+        // 多面体描画関数（簡易ワイヤーフレーム）
+function createPolyhedron(type, count) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'polygon-wrapper';
+
+    const name = document.createElement('div');
+    name.className = 'polygon-name';
+    name.textContent = `正${type}面体`;
+    wrapper.appendChild(name);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 200;
+    canvas.height = 200;
+    canvas.style.background = "#333";
+    canvas.style.borderRadius = "12px";
+    wrapper.appendChild(canvas);
+
+    // 頂点・辺データ
+    let vertices = [];
+    let edges = [];
+    if (type === "立方体") {
+        vertices = [
+            [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+            [-1, -1, 1], [1, -1, 1], [1, 1, 1], [-1, 1, 1]
+        ];
+        edges = [
+            [0,1],[1,2],[2,3],[3,0],
+            [4,5],[5,6],[6,7],[7,4],
+            [0,4],[1,5],[2,6],[3,7]
+        ];
+    } else if (type === "正八面体") {
+        vertices = [
+            [1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]
+        ];
+        edges = [
+            [0,2],[0,3],[0,4],[0,5],
+            [1,2],[1,3],[1,4],[1,5],
+            [2,4],[2,5],[3,4],[3,5]
+        ];
+    }
+    function project([x, y, z]) {
+        const scale = 60;
+        const px = canvas.width/2 + x * scale * 0.8 + z * scale * 0.3;
+        const py = canvas.height/2 + y * scale * 0.8 - z * scale * 0.2;
+        return [px, py];
+    }
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    edges.forEach(([a, b]) => {
+        const [x1, y1] = project(vertices[a]);
+        const [x2, y2] = project(vertices[b]);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+    });
+
+    // カウント表示
+    const countDiv = document.createElement('div');
+    countDiv.style.position = "absolute";
+    countDiv.style.top = "50%";
+    countDiv.style.left = "50%";
+    countDiv.style.transform = "translate(-50%, -50%)";
+    countDiv.style.color = "#fff";
+    countDiv.style.fontSize = "2rem";
+    countDiv.style.pointerEvents = "none";
+    countDiv.textContent = formatNumber(count);
+    wrapper.appendChild(countDiv);
+
+    // クリックイベント
+    wrapper.addEventListener('click', function() {
+        totalCount += clickValue * 100; // 多面体は100倍
+        countDiv.textContent = formatNumber(totalCount);
+        updateTotalCounter();
+        updateEvolveBtn();
+        updatePowerupBtn();
+        updateRainbowBtn();
+        checkAutoUnlock();
+    });
+
+    // 多面体状態でもオートカウント・虹色変色が使えるように
+    polygonDiv = wrapper;
+    // オートカウント
+    if (autoCounting) {
+        if (autoInterval) clearInterval(autoInterval);
+        autoInterval = setInterval(function() {
+            totalCount += clickValue * 100;
+            countDiv.textContent = formatNumber(totalCount);
+            updateTotalCounter();
+            updateEvolveBtn();
+            updatePowerupBtn();
+            updateRainbowBtn();
+            checkAutoUnlock();
+        }, 1000);
+    }
+
+    return wrapper;
+}
+
         autoBtn.addEventListener('click', function() {
     if (autoCounting) {
         autoCounting = false;
@@ -397,14 +517,88 @@
         autoBtn.textContent = "オートカウントON";
     } else {
         autoCounting = true;
-        autoInterval = setInterval(autoCount, 1000);
+        // 多面体状態かどうか判定
+        if (polygonDiv && polygonDiv.querySelector('canvas')) {
+            // 多面体状態
+            autoInterval = setInterval(function() {
+                // 多面体のカウント表示を更新
+                totalCount += clickValue * 100;
+                const countDiv = polygonDiv.querySelector('div:not(.polygon-name)');
+                if (countDiv) {
+                    countDiv.textContent = formatNumber(totalCount);
+                }
+                updateTotalCounter();
+                updateEvolveBtn();
+                updatePowerupBtn();
+                updateRainbowBtn();
+                checkAutoUnlock();
+            }, 1000);
+        } else {
+            // 正多角形状態
+            autoInterval = setInterval(function() {
+                autoCount();
+            }, 1000);
+        }
         autoBtn.textContent = "オートカウントOFF";
     }
 });
 
-// 初期化時にもボタン状態更新
-updateRainbowBtn();
+// 進化時にもオートカウントを再設定
+evolveBtn.addEventListener('click', function() {
+    if (totalCount >= evolveCost) {
+        if (polyhedronUnlock) {
+            const polyType = (count % 2 === 0) ? "立方体" : "正八面体";
+            const polyDiv = createPolyhedron(polyType, totalCount);
+            gameWrapper.replaceChild(polyDiv, polygonDiv);
+            polygonDiv = polyDiv;
+            // オートカウントがONなら再設定
+            if (autoCounting) {
+                clearInterval(autoInterval);
+                autoInterval = setInterval(function() {
+                    totalCount += clickValue * 100;
+                    const countDiv = polygonDiv.querySelector('div:not(.polygon-name)');
+                    if (countDiv) {
+                        countDiv.textContent = formatNumber(totalCount);
+                    }
+                    updateTotalCounter();
+                    updateEvolveBtn();
+                    updatePowerupBtn();
+                    updateRainbowBtn();
+                    checkAutoUnlock();
+                }, 1000);
+            }
+        } else {
+            sides++;
+            clickValue *= 2;
+            totalCount -= evolveCost;
+            count = 0;
+            evolveCost *= 10;
+            powerupCost = Math.floor(evolveCost / 10);
+            rainbowCost = evolveCost;
+            const newPolygon = createPolygon(sides, count);
+            gameWrapper.replaceChild(newPolygon, polygonDiv);
+            polygonDiv = newPolygon;
+            polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
+            // オートカウントがONなら再設定
+            if (autoCounting) {
+                clearInterval(autoInterval);
+                autoInterval = setInterval(function() {
+                    autoCount();
+                }, 1000);
+            }
+        }
+        updateTotalCounter();
+        updateEvolveBtn();
+        updatePowerupBtn();
+        updateRainbowBtn();
+    }
+});
 
+// 初期化時にボタン状態を必ず更新
+updateEvolveBtn();
+updatePowerupBtn();
+updateRainbowBtn();
+checkAutoUnlock(); // ←追加
     </script>
 </body>
 </html>
