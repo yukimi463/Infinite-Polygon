@@ -8,6 +8,8 @@
         <button id="evolveBtn" class="auto-btn" disabled>進化する（コスト: <span id="evolveCostText">10</span>）</button>
         <button id="powerupBtn" class="auto-btn" disabled>強化する（Lv.<span id="powerupLevelText">0</span> コスト: <span id="powerupCostText">1</span>）</button>
         <button id="autoBtn" class="auto-btn" disabled>オートカウント（所持金100で解放）</button>
+        <!-- 追加: 虹色変色ボタン -->
+        <button id="rainbowBtn" class="auto-btn" disabled>虹色変色（コスト: <span id="rainbowCostText">10</span>）</button>
     </div>
     <style>
         .polygon-wrapper {
@@ -75,6 +77,7 @@
         let totalCount = 0; // 通貨
         let clickValue = 1;
         let evolveCost = 10;
+        let rainbowCost = evolveCost; // ←追加
         let autoCounting = false;
         let autoInterval = null;
 
@@ -90,6 +93,9 @@
         const powerupBtn = document.getElementById('powerupBtn');
         const powerupCostText = document.getElementById('powerupCostText');
         const powerupLevelText = document.getElementById('powerupLevelText');
+        const rainbowBtn = document.getElementById('rainbowBtn');
+        const rainbowCostText = document.getElementById('rainbowCostText');
+
         let polygonDiv;
 
         // ミニ多角形の参照を保持
@@ -150,18 +156,22 @@
             if (isMini) {
                 const countObj = { value: count };
                 polygon.addEventListener('click', function(e) {
-                    countObj.value += miniClickValue;
+                    // miniPolygonsから自分のobjを取得
+                    const obj = miniPolygons.find(o => o.polygon === polygon);
+                    const valueToAdd = obj ? obj.clickValue : miniClickValue;
+                    countObj.value += valueToAdd;
                     polygon.textContent = formatNumber(countObj.value);
                     adjustFontSize(polygon, countObj.value, true);
-                    totalCount += miniClickValue;
+                    totalCount += valueToAdd;
                     updateTotalCounter();
                     updateEvolveBtn();
                     updatePowerupBtn();
+                    updateRainbowBtn();
                     checkAutoUnlock();
                     e.stopPropagation();
                 });
-                // 参照を保存
-                miniPolygons.push({ polygon, countRef: () => countObj.value, clickValue: miniClickValue, _countObj: countObj });
+                miniPolygons.push({ polygon, countRef: () => countObj.value, clickValue: miniClickValue, _countObj: countObj, isRainbow: false, rainbowTimeout: null });
+                updateRainbowBtn();
             }
 
             return wrapper;
@@ -179,6 +189,7 @@
                 obj.polygon.textContent = formatNumber(obj.countRef());
                 adjustFontSize(obj.polygon, obj.countRef(), true);
             });
+            updateRainbowBtn();
         }
 
         function updateTotalCounter() {
@@ -193,12 +204,18 @@
             powerupCostText.textContent = formatNumber(powerupCost);
             powerupLevelText.textContent = powerupLevel;
         }
+        // 虹色変色ボタンの状態更新
+        function updateRainbowBtn() {
+            rainbowBtn.disabled = totalCount < rainbowCost || miniPolygons.length === 0;
+            rainbowCostText.textContent = formatNumber(rainbowCost);
+        }
 
         let miniUnlock = false; // ミニ生成解放フラグ
 
         function handleClick() {
             count += clickValue;
             totalCount += clickValue;
+            console.log("count:", count, "totalCount:", totalCount); // ←追加
             updatePolygonValue();
             updateMiniPolygonValues();
             updateTotalCounter();
@@ -209,7 +226,6 @@
 
             // ミニ生成機能が解放されていれば生成
             if (miniUnlock && Math.random() < 0.01) {
-                // ミニ多角形のcountは必ず0で新しいオブジェクトを渡す
                 const miniDiv = createPolygon(
                     sides,
                     0,
@@ -266,6 +282,7 @@
                 count = 0;
                 evolveCost *= 10;
                 powerupCost = Math.floor(evolveCost / 10); // 強化コストも更新
+                rainbowCost = evolveCost; // 虹色コストも進化コストと同じ
                 const newPolygon = createPolygon(sides, count);
                 gameWrapper.replaceChild(newPolygon, polygonDiv);
                 polygonDiv = newPolygon;
@@ -273,6 +290,7 @@
                 updateTotalCounter();
                 updateEvolveBtn();
                 updatePowerupBtn();
+                updateRainbowBtn();
             }
         });
 
@@ -288,12 +306,43 @@
             }
         });
 
+        // 虹色変色ボタンの処理
+        rainbowBtn.addEventListener('click', function() {
+            if (totalCount < rainbowCost || miniPolygons.length === 0) return;
+            totalCount -= rainbowCost;
+            updateTotalCounter();
+            updateRainbowBtn();
+            // ミニ多角形選択
+            const target = window.prompt("虹色にするミニ正多角形の番号を入力（1～" + miniPolygons.length + "）");
+            const idx = parseInt(target, 10) - 1;
+            if (isNaN(idx) || idx < 0 || idx >= miniPolygons.length) return alert("番号が不正です");
+            const obj = miniPolygons[idx];
+            if (obj.isRainbow) return alert("すでに虹色です");
+
+            // 虹色化
+            obj.isRainbow = true;
+            obj.polygon.style.background = "linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet)";
+            obj.polygon.style.border = "2px solid #fff";
+            obj._originalClickValue = obj.clickValue;
+            obj.clickValue *= 10;
+
+            // 10秒後に消滅（名称も同時に削除）
+            obj.rainbowTimeout = setTimeout(() => {
+                // 配列から削除する前に元の値に戻す（他の図形に影響しないように）
+                obj.clickValue = obj._originalClickValue;
+                obj.isRainbow = false;
+                // 親のpolygon-wrapperを削除
+                if (obj.polygon.parentElement) {
+                    obj.polygon.parentElement.remove();
+                }
+                miniPolygons.splice(idx, 1);
+                updateRainbowBtn();
+            }, 10000);
+        });
+
         polygonDiv = createPolygon(sides, count);
         gameWrapper.appendChild(polygonDiv);
-        updateTotalCounter();
-        updateEvolveBtn();
-        updatePowerupBtn();
-
+        // ここで必ずイベント付与
         polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
 
         function formatNumber(num) {
@@ -352,6 +401,10 @@
         autoBtn.textContent = "オートカウントOFF";
     }
 });
+
+// 初期化時にもボタン状態更新
+updateRainbowBtn();
+
     </script>
 </body>
 </html>
