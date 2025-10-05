@@ -1,0 +1,58 @@
+.polygon-wrapper {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin-left: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.polygon-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
+}
+.polygon {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #fff;
+    background: #2196f3;
+    user-select: none;
+    transition: 0.2s;
+    position: relative;
+}
+.polygon:active {
+    background: #1976d2;
+}
+.vertex-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ffeb3b;
+    border-radius: 50%;
+    border: 2px solid #333;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* タイトルをかっこよく装飾 */
+h1 {
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    color: #f321de;
+    text-shadow: 2px 2px 8px #1976d2, 0 0 16px #fff;
+    background: linear-gradient(90deg, #f321c9 0%, #e040fb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+    text-align: left;
+}
