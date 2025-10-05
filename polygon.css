@@ -123,6 +123,20 @@ body::after {
     to   { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
+.total-counter {
+    position: fixed;        /* 常に右上に固定表示 */
+    top: 20px;
+    right: 40px;
+    font-size: 1.8rem;      /* 文字サイズ拡大 */
+    font-weight: bold;
+    color: #fff;            /* 白字で視認性UP */
+    text-shadow: 0 0 8px #4fc3f7, 0 0 16px #2196f3; /* 光る感じ */
+    background: rgba(0, 0, 0, 0.4); /* 半透明背景で見やすく */
+    padding: 8px 16px;
+    border-radius: 12px;
+    z-index: 10;            /* 背景より前に出す */
+}
+
 /* 🌈 オーロラの光 */
 .aurora {
     position: fixed;
@@ -168,5 +182,34 @@ body::after {
     0%   { transform: translate(0, 0) rotate(45deg); opacity: 0; }
     10%  { opacity: 1; }
     100% { transform: translate(-1000px, 1000px) rotate(45deg); opacity: 0; }
+}
+
+/* ===== 円度ゲージ ===== */
+.roundness-display {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #00e5ff;
+    text-shadow: 0 0 6px #00ffff, 0 0 12px #4fc3f7;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.roundness-bar {
+    width: 240px;
+    height: 14px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 6px rgba(0,255,255,0.4);
+    margin-bottom: 20px;
+}
+
+#roundnessFill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #00e5ff, #80d8ff, #b2ebf2);
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px #80d8ff;
 }
 

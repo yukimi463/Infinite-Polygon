@@ -38,6 +38,9 @@
         const powerupLevelText = document.getElementById('powerupLevelText');
         const rainbowBtn = document.getElementById('rainbowBtn');
         const rainbowCostText = document.getElementById('rainbowCostText');
+        // 円度ゲージ要素参照
+        const roundnessDisplay = document.getElementById('roundnessDisplay');
+        const roundnessFill = document.getElementById('roundnessFill');
 
         let polygonDiv;
 
@@ -141,6 +144,7 @@
         function updateEvolveBtn() {
             evolveBtn.disabled = totalCount < evolveCost;
             evolveCostText.textContent = formatNumber(evolveCost);
+            updateRoundness(); // ←追加
         }
         function updatePowerupBtn() {
             powerupBtn.disabled = totalCount < powerupCost;
@@ -155,6 +159,14 @@
                 console.log("虹色変色ボタン未解放: 所持金", totalCount, "ミニ多角形数", miniPolygons.length);
             } else {
                 console.log("虹色変色ボタン解放: 所持金", totalCount, "ミニ多角形数", miniPolygons.length);
+            }
+        }
+
+        function updateRoundness() {
+            const roundness = Math.min(100, Math.floor((sides / 100) * 100)); // 100角形で100%
+            if (roundnessDisplay && roundnessFill) {
+                roundnessDisplay.textContent = `円度: ${roundness}%`;
+                roundnessFill.style.width = `${roundness}%`;
             }
         }
 
@@ -313,6 +325,7 @@ window.onload = function() {
     updateEvolveBtn();
     updatePowerupBtn();
     updateRainbowBtn();
+    updateRoundness(); // ← これを追加
     checkAutoUnlock();
 };
 
