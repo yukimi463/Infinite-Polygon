@@ -1,17 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Infinite Polygon</title>
+  <link rel="stylesheet" href="polygon.css">
+</head>
 <body>
-    <div class="total-counter" id="totalCounter">所持金: 0</div>
-    <h1>Infinite Polygon</h1>
-    <div id="gameWrapper" style="display: flex; flex-direction: row; align-items: center;">
-        <!-- 多角形はここに追加される -->
-    </div>
-    <div style="margin-top:24px;">
-        <button id="evolveBtn" class="auto-btn" disabled>進化する（コスト: <span id="evolveCostText">10</span>）</button>
-        <button id="powerupBtn" class="auto-btn" disabled>強化する（Lv.<span id="powerupLevelText">0</span> コスト: <span id="powerupCostText">1</span>）</button>
-        <button id="autoBtn" class="auto-btn" disabled>オートカウント（所持金100で解放）</button>
-        <!-- 追加: 虹色変色ボタン -->
-        <button id="rainbowBtn" class="auto-btn" disabled>虹色変色（コスト: <span id="rainbowCostText">10</span>）</button>
-    </div>
-     <link rel="stylesheet" href="polygon.css">
-    <script src="polygon.js"></script>
+  <div class="total-counter" id="totalCounter">所持金: 0</div>
+  <h1>Infinite Polygon</h1>
+  <div id="gameWrapper" style="display: flex; flex-direction: row; align-items: center;">
+      <!-- 多角形はここに追加される -->
+  </div>
+  <div style="margin-top:24px;">
+      <button id="evolveBtn" class="auto-btn" disabled>進化する（コスト: <span id="evolveCostText">10</span>）</button>
+      <button id="powerupBtn" class="auto-btn" disabled>強化する（Lv.<span id="powerupLevelText">0</span> コスト: <span id="powerupCostText">1</span>）</button>
+      <button id="autoBtn" class="auto-btn" disabled>オートカウント（所持金100で解放）</button>
+      <button id="rainbowBtn" class="auto-btn" disabled>虹色変色（コスト: <span id="rainbowCostText">10</span>）</button>
+  </div>
+
+  <script src="polygon.js"></script>
 </body>
 </html>

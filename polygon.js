@@ -98,7 +98,7 @@
             // ミニ多角形のクリックイベント
             if (isMini) {
                 const countObj = { value: count };
-                polygon.addEventListener('click', function(e) {
+                polygon.addEventListener('pointerdown', function(e) {
                     // miniPolygonsから自分のobjを取得
                     const obj = miniPolygons.find(o => o.polygon === polygon);
                     const valueToAdd = obj ? obj.clickValue : miniClickValue;
@@ -229,7 +229,7 @@ function checkAutoUnlock() {
             checkPolyhedronUnlock(); // ←追加
         }
 
-        evolveBtn.addEventListener('click', function() {
+        evolveBtn.addEventListener('pointerdown', function() {
             if (totalCount >= evolveCost) {
                 if (polyhedronUnlock) {
                     // 1Gg到達後は多面体へ
@@ -248,7 +248,7 @@ function checkAutoUnlock() {
                     const newPolygon = createPolygon(sides, count);
                     gameWrapper.replaceChild(newPolygon, polygonDiv);
                     polygonDiv = newPolygon;
-                    polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
+                    polygonDiv.querySelector('.polygon').addEventListener('pointerdown', handleClick);
                 }
                 updateTotalCounter();
                 updateEvolveBtn();
@@ -257,7 +257,7 @@ function checkAutoUnlock() {
             }
         });
 
-        powerupBtn.addEventListener('click', function() {
+        powerupBtn.addEventListener('pointerdown', function() {
             if (totalCount >= powerupCost) {
                 powerupLevel++;
                 totalCount -= powerupCost;
@@ -270,7 +270,7 @@ function checkAutoUnlock() {
         });
 
         // 虹色変色ボタンの処理
-        rainbowBtn.addEventListener('click', function() {
+        rainbowBtn.addEventListener('pointerdown', function() {
             if (totalCount < rainbowCost || miniPolygons.length === 0) return;
             totalCount -= rainbowCost;
             updateTotalCounter();
@@ -308,7 +308,7 @@ window.onload = function() {
     // ここに元の初期化処理（polygonDiv = createPolygon...など）を記述
     polygonDiv = createPolygon(sides, count);
     gameWrapper.appendChild(polygonDiv);
-    polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
+    polygonDiv.querySelector('.polygon').addEventListener('pointerdown', handleClick);
 
     updateEvolveBtn();
     updatePowerupBtn();
@@ -432,7 +432,7 @@ function createPolyhedron(type, count) {
     wrapper.appendChild(countDiv);
 
     // クリックイベント
-    wrapper.addEventListener('click', function() {
+    wrapper.addEventListener('pointerdown', function() {
         totalCount += clickValue * 100; // 多面体は100倍
         countDiv.textContent = formatNumber(totalCount);
         updateTotalCounter();
@@ -461,7 +461,7 @@ function createPolyhedron(type, count) {
     return wrapper;
 }
 
-        autoBtn.addEventListener('click', function() {
+        autoBtn.addEventListener('pointerdown', function() {
     if (autoCounting) {
         autoCounting = false;
         clearInterval(autoInterval);
@@ -496,7 +496,7 @@ function createPolyhedron(type, count) {
 });
 
 // 進化時にもオートカウントを再設定
-evolveBtn.addEventListener('click', function() {
+evolveBtn.addEventListener('pointerdown', function() {
     if (totalCount >= evolveCost) {
         if (polyhedronUnlock) {
             const polyType = (count % 2 === 0) ? "立方体" : "正八面体";
@@ -530,7 +530,7 @@ evolveBtn.addEventListener('click', function() {
             const newPolygon = createPolygon(sides, count);
             gameWrapper.replaceChild(newPolygon, polygonDiv);
             polygonDiv = newPolygon;
-            polygonDiv.querySelector('.polygon').addEventListener('click', handleClick);
+            polygonDiv.querySelector('.polygon').addEventListener('click', handlepointerdown);
             // オートカウントがONなら再設定
             if (autoCounting) {
                 clearInterval(autoInterval);

@@ -41,7 +41,7 @@
     z-index: 2;
 }
 
-/* タイトルをかっこよく装飾 */
+/* タイトルを装飾 */
 h1 {
     font-family: 'Segoe UI', 'Arial', sans-serif;
     font-size: 3rem;
@@ -55,4 +55,17 @@ h1 {
     -webkit-text-fill-color: transparent;
     margin-bottom: 24px;
     text-align: left;
+}
+
+/* ===== スマホ操作最適化 ===== */
+button, .polygon {
+    touch-action: manipulation; /* ダブルタップズーム防止 */
+    -webkit-tap-highlight-color: transparent; /* タップ枠消す */
+}
+body {
+    margin: 0;
+    overscroll-behavior: contain; /* スクロール抑制 */
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none; /* iOSのクリック遅延防止 */
 }
