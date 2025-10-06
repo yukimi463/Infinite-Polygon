@@ -213,3 +213,73 @@ body::after {
     box-shadow: 0 0 10px #80d8ff;
 }
 
+.status-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: rgba(0,0,20,0.8);
+  color: #fff;
+  padding: 24px 32px;
+  border: 2px solid #80d8ff;
+  border-radius: 16px;
+  box-shadow: 0 0 20px #00e5ff;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  opacity: 0;
+  transition: all 0.5s ease;
+  z-index: 999;
+}
+
+.status-overlay.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.status-content h2 {
+  margin-bottom: 10px;
+  color: #80eaff;
+  text-shadow: 0 0 12px #4fc3f7;
+}
+.status-content p {
+  margin: 4px 0;
+  font-size: 1.1rem;
+}
+
+/* === セーブ・ロードボタン専用スタイル === */
+.save-btn {
+  background: linear-gradient(90deg, #2196f3, #64b5f6);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 8px;
+  margin: 10px 8px;
+  box-shadow: 0 0 12px rgba(33,150,243,0.6);
+  cursor: pointer;
+  transition: 0.3s;
+}
+.save-btn:hover {
+  background: linear-gradient(90deg, #1e88e5, #42a5f5);
+  box-shadow: 0 0 20px rgba(33,150,243,0.9);
+}
+
+/* ロードボタンは緑系 */
+.load-btn {
+  background: linear-gradient(90deg, #43a047, #81c784);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 8px;
+  margin: 10px 8px;
+  box-shadow: 0 0 12px rgba(76,175,80,0.6);
+  cursor: pointer;
+  transition: 0.3s;
+}
+.load-btn:hover {
+  background: linear-gradient(90deg, #388e3c, #66bb6a);
+  box-shadow: 0 0 20px rgba(76,175,80,0.9);
+}
