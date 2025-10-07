@@ -1,5 +1,5 @@
 // ===============================
-// 🧘‍♂️ 瞑想モード & 哲学スコアシステム
+// 🧘‍♂️ 瞑想モード & 哲学スコアシステム（Controller連携対応版）
 // ===============================
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -7,7 +7,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // 共通変数
   window.meditationMode = false;
   window.philosophyScore = 0;
-  let meditationInterval = null;
+  window.meditationInterval = null;
 
   // 要素取得
   const meditationBtn = document.getElementById("meditationModeBtn");
@@ -15,23 +15,19 @@ window.addEventListener("DOMContentLoaded", () => {
   const roundnessDisplay = document.getElementById("roundnessDisplay");
   const gameWrapper = document.getElementById("gameWrapper");
 
-  // 要素が存在するかチェック
   if (!meditationBtn || !roundnessDisplay || !gameWrapper) {
     console.error("瞑想モード: 要素が見つかりません");
     return;
   }
 
-  // イベント登録
-  meditationBtn.addEventListener("click", () => {
-    meditationMode = !meditationMode;
-    if (meditationMode) {
-      startMeditation();
-    } else {
-      stopMeditation();
-    }
-  });
+  // ✅ Controllerがクリック処理を持っているので削除
+  // meditationBtn.addEventListener("click", () => { ... }) は不要！
 
-  function startMeditation() {
+  // ===== 開始 =====
+  window.startMeditation = function startMeditation() {
+    if (window.meditationInterval !== null) return; // 二重開始防止
+
+    window.meditationMode = true;
     document.body.classList.add("meditation-active");
     meditationBtn.textContent = "瞑想解除";
     gameWrapper.style.pointerEvents = "none";
@@ -43,47 +39,52 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // スコア上昇ループ
-    meditationInterval = setInterval(() => {
-      if (philosophyScore < 100) {
-        philosophyScore += 0.05;
+    window.meditationInterval = setInterval(() => {
+      if (window.meditationMode && window.philosophyScore < 100) {
+        window.philosophyScore += 0.05;
         updatePhilosophyUI();
         applyPhilosophyBonus();
       }
     }, 1000);
-  }
+  };
 
-  function stopMeditation() {
+  // ===== 停止 =====
+  window.stopMeditation = function stopMeditation() {
+    window.meditationMode = false;
     document.body.classList.remove("meditation-active");
     meditationBtn.textContent = "瞑想モード";
     gameWrapper.style.pointerEvents = "auto";
 
     if (meditationBgm) meditationBgm.pause();
-    clearInterval(meditationInterval);
-  }
+
+    if (window.meditationInterval) {
+      clearInterval(window.meditationInterval);
+      window.meditationInterval = null;
+    }
+  };
 
   function updatePhilosophyUI() {
-    roundnessDisplay.textContent = `円への近づき率: ${philosophyScore.toFixed(2)}%`;
+    roundnessDisplay.textContent = `円への近づき率: ${window.philosophyScore.toFixed(2)}%`;
   }
 
   function applyPhilosophyBonus() {
-    // variables.jsの変数を利用
     if (typeof evolveCost === "undefined") return;
-    if (philosophyScore >= 10 && philosophyScore < 25) {
+
+    if (window.philosophyScore >= 10 && window.philosophyScore < 25) {
       evolveCost *= 0.98;
-    } else if (philosophyScore >= 25 && philosophyScore < 50) {
+    } else if (window.philosophyScore >= 25 && window.philosophyScore < 50) {
       clickValue *= 1.05;
-    } else if (philosophyScore >= 50 && philosophyScore < 75) {
+    } else if (window.philosophyScore >= 50 && window.philosophyScore < 75) {
       autoSpeed *= 1.1;
-    } else if (philosophyScore >= 75 && philosophyScore < 90) {
+    } else if (window.philosophyScore >= 75 && window.philosophyScore < 90) {
       maxLevel += 1;
-    } else if (philosophyScore >= 90 && philosophyScore < 100) {
+    } else if (window.philosophyScore >= 90 && window.philosophyScore < 100) {
       triggerLightRing();
-    } else if (philosophyScore >= 100) {
+    } else if (window.philosophyScore >= 100) {
       unlockDreamMode();
     }
   }
 
-  // 光の円演出
   function triggerLightRing() {
     if (!document.getElementById("lightRing")) {
       const ring = document.createElement("div");
@@ -104,7 +105,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 夢現モード（仮）
   function unlockDreamMode() {
     stopMeditation();
     alert("✨ あなたは完全なる円に到達しました。『夢現モード』が解放されました。");

@@ -1,9 +1,10 @@
 let sides = 3;
 let count = 0;
 let totalCount = 0; // 通貨
-let clickValue = 1;
-let evolveCost = 10;
-let rainbowCost = evolveCost; // ←追加
+window.clickValue = 1;
+window.autoSpeed = 1;
+window.evolveCost = 10;
+window.rainbowCost = window.evolveCost;
 let autoCounting = false;
 let autoInterval = null;
 
@@ -16,6 +17,13 @@ let miniPolygons = [];
 
 let miniUnlock = false; // ミニ生成解放フラグ
 let polyhedronUnlock = false; // 多面体解放フラグ
+
+// 加速モード関連変数
+window.accelerationMode = false;
+window.accelerationMultiplier = 2.0;   // 倍率
+window.accelerationDuration = 10000;   // 効果時間(ms)
+window.accelerationCooldown = 20000;   // クールタイム(ms)
+window.accelerationReady = true;
 
 const gameWrapper = document.getElementById('gameWrapper');
 const totalCounter = document.getElementById('totalCounter');
