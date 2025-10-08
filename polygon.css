@@ -313,3 +313,22 @@ body.acceleration-active {
 }
 
 
+
+/* =========================================
+   🚫 ボタンが非活性（disabled）時のスタイル
+========================================= */
+.auto-btn:disabled {
+  opacity: 0.5;                   /* 半透明にして */
+  cursor: not-allowed;            /* カーソルも禁止マークに */
+  filter: grayscale(60%);         /* 少し白っぽくする */
+  background: #999 !important;    /* 背景グレー（他のgradientより優先） */
+  color: #eee !important;         /* 文字色も薄く */
+  box-shadow: none !important;    /* 光る効果をオフ */
+  transition: none !important;
+}
+
+
+
+
+
+

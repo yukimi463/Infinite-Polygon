@@ -1,9 +1,8 @@
 // ===============================
-// ⚡ 加速モード制御（完全同期・確実解除）
+// ⚡ 加速モード制御（完全同期・Controller連携版）
 // ===============================
 
 window.addEventListener("DOMContentLoaded", () => {
-
   const accelBtn = document.getElementById("accelerationModeBtn");
   if (!accelBtn) return;
 
@@ -15,27 +14,18 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // 既定パラメータ（未設定なら代入）
   window.accelerationMultiplier ??= 2.0;
-  window.accelerationDuration ??= 10000;   // 10秒
-  window.accelerationCooldown ??= 20000;   // 20秒
-
-  accelBtn.addEventListener("click", () => {
-    if (window.accelerationMode || !window.accelerationReady) return;
-    window.startAcceleration();
-  });
+  window.accelerationDuration ??= 10000; // 10秒
+  window.accelerationCooldown ??= 20000; // 20秒
 
   // ===== 開始 =====
   window.startAcceleration = function () {
-    // 多重防止
     clearTimeout(window.accelerationTimer);
     clearTimeout(window.accelerationCooldownTimer);
 
     window.accelerationMode = true;
     window.accelerationReady = false;
 
-    accelBtn.textContent = "加速中...";
-    accelBtn.disabled = true;
-
-    // 背景エフェクト
+    // ✅ UIは Controller 側が更新するため触らない
     document.body.classList.add("acceleration-active");
 
     // 倍率適用
@@ -69,6 +59,12 @@ window.addEventListener("DOMContentLoaded", () => {
     accelBtn.disabled = true;
 
     console.log("🧊 加速モード終了");
+
+    // ✅ Controllerに通知（UI状態を戻す）
+    if (typeof window.stopAccelerationExternally === "function") {
+      console.log("🔁 Controllerへ終了通知");
+      window.stopAccelerationExternally();
+    }
 
     // クールタイマー
     window.accelerationCooldownTimer = setTimeout(() => {

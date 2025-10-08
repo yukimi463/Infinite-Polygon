@@ -1,91 +1,129 @@
 // ===============================
-// 🎛 モードコントローラー（修正版）
+// 🎛 モードコントローラー（完全排他＋堅牢版）
 // ===============================
-// 瞑想モードと加速モードを排他制御し、状態を自動同期
+// 加速モード中は瞑想ボタン完全無効化。
+// 瞑想中は加速ボタン完全無効化。
 // ===============================
 
 window.addEventListener("DOMContentLoaded", () => {
   const meditationBtn = document.getElementById("meditationModeBtn");
   const accelBtn = document.getElementById("accelerationModeBtn");
 
-  // モード状態
+  if (!meditationBtn || !accelBtn) return;
+
+  // 状態管理
   const modeState = { current: "none" }; // "none" | "meditation" | "acceleration"
 
   // ===============================
-  // 🎧 イベント登録
+  // 🔘 UI更新関数
   // ===============================
-  if (meditationBtn) {
-    meditationBtn.addEventListener("click", () => {
-      if (modeState.current === "acceleration") {
-        // 加速中なら強制停止してから瞑想へ
-        stopAccelerationExternally(true);
-      }
+  function updateButtonStates() {
+    console.log("🧩 updateButtonStates:", modeState.current);
+    switch (modeState.current) {
+        
+      case "meditation":
+        meditationBtn.disabled = false;
+        meditationBtn.textContent = "瞑想解除";
+        accelBtn.disabled = true;
+        break;
 
-      if (!window.meditationMode) {
-        startMeditationExternally();
-      } else {
-        stopMeditationExternally();
-      }
-    });
+      case "acceleration":
+        meditationBtn.disabled = true;
+        meditationBtn.textContent = "瞑想モード（加速中）";
+        accelBtn.disabled = false;
+        accelBtn.textContent = "加速中...";
+        break;
+
+      default:
+        meditationBtn.disabled = false;
+        meditationBtn.textContent = "瞑想モード";
+        accelBtn.disabled = !window.accelerationReady;
+        accelBtn.textContent = "加速モード";
+        break;
+    }
   }
 
-  if (accelBtn) {
-    accelBtn.addEventListener("click", () => {
-      if (modeState.current === "meditation") {
-        // 瞑想中なら強制停止してから加速へ
-        stopMeditationExternally(true);
-      }
-
-      if (!window.accelerationMode && window.accelerationReady) {
-        startAccelerationExternally();
-      }
-    });
-  }
-
   // ===============================
-  // 🧘‍♂️ 瞑想モード制御
+  // 🧘‍♂️ 瞑想モード操作
   // ===============================
+  meditationBtn.addEventListener("click", () => {
+    // 🚫 加速中は完全ブロック
+    if (modeState.current === "acceleration" || window.accelerationMode) {
+      console.warn("⚠️ 加速中のため瞑想モードは使用できません");
+      return;
+    }
+
+    if (!window.meditationMode) startMeditationExternally();
+    else stopMeditationExternally();
+  });
+
   function startMeditationExternally() {
+    if (window.accelerationMode) return; // 二重保険
     modeState.current = "meditation";
     if (typeof window.startMeditation === "function") window.startMeditation();
-    if (accelBtn) accelBtn.disabled = true;
+    updateButtonStates();
   }
 
-  function stopMeditationExternally(force = false) {
-    if (modeState.current !== "meditation" && !force) return;
+  function stopMeditationExternally() {
     modeState.current = "none";
     if (typeof window.stopMeditation === "function") window.stopMeditation();
-    if (accelBtn) accelBtn.disabled = false;
+    updateButtonStates();
   }
 
   // ===============================
-  // ⚡ 加速モード制御
+  // ⚡ 加速モード操作
   // ===============================
+  accelBtn.addEventListener("click", () => {
+    // 🚫 瞑想中は加速禁止
+    if (modeState.current === "meditation" || window.meditationMode) {
+      console.warn("⚠️ 瞑想中のため加速モードは使用できません");
+      return;
+    }
+
+    if (!window.accelerationMode && window.accelerationReady) {
+      startAccelerationExternally();
+    }
+  });
+
   function startAccelerationExternally() {
-    modeState.current = "acceleration";
-    if (typeof window.startAcceleration === "function") window.startAcceleration();
-    if (meditationBtn) meditationBtn.disabled = true;
+  console.log("🎮 加速モード開始要求: current =", modeState.current);
+  modeState.current = "acceleration";
+  updateButtonStates();
+  console.log("🎮 startAccelerationExternally → state:", modeState.current);
 
-    // 🔁 加速解除後、自動でstateを戻す
-    const duration = window.accelerationDuration || 10000;
-    setTimeout(() => {
-      if (window.accelerationMode === false) return; // 既に解除済みなら無視
+  // 🔹 Controllerのstateをグローバルに共有（他ファイルから参照可能にする）
+  window.currentModeState = "acceleration";
+
+  if (typeof window.startAcceleration === "function") window.startAcceleration();
+
+  const duration = window.accelerationDuration || 10000;
+  setTimeout(() => {
+    if (!window.accelerationMode) {
       modeState.current = "none";
-      if (meditationBtn) meditationBtn.disabled = false;
-    }, duration + 100); // 少し余裕を持たせて安全解除
-  }
+      window.currentModeState = "none"; // 同期解除
+      updateButtonStates();
+    }
+  }, duration + 200);
+}
 
-  function stopAccelerationExternally(force = false) {
-    if (modeState.current !== "acceleration" && !force) return;
-    modeState.current = "none";
-    if (typeof window.endAcceleration === "function") window.endAcceleration();
-    if (meditationBtn) meditationBtn.disabled = false;
-  }
+  window.stopAccelerationExternally = function () {
+  if (modeState.current !== "acceleration") return;
+  modeState.current = "none";
+  if (typeof window.endAcceleration === "function") window.endAcceleration();
+  updateButtonStates();
+};
 
   // ===============================
-  // 🧩 自動状態同期（開発デバッグ用）
+  // 🩺 クールダウン監視（再有効化）
   // ===============================
-  setInterval(() => {
-    // console.log("🛰 現在のモード:", modeState.current);
-  }, 5000);
+  // ===============================
+// 🩺 クールダウン監視（再有効化）
+// ===============================
+setInterval(() => {
+  // ✅ 現在「none」で、かつ実際にボタンが使用可能なときだけ更新
+  if (modeState.current === "none" && window.accelerationReady && !window.accelerationMode && !window.meditationMode) {
+    updateButtonStates();
+  }
+}, 1000);
+
 });
