@@ -74,3 +74,17 @@ function loadGame() {
   flashBackground();
   showStatusOverlay();
 }
+
+function resetGameData() {
+  if (!confirm("本当に全データをリセットしますか？")) return;
+
+  localStorage.clear();
+  totalCount = 0;
+  count = 0;
+  powerupLevel = 0;
+  features = {};
+  document.getElementById("totalCounter").textContent = "所持金: 0";
+  alert("データをリセットしました。ページを再読み込みします。");
+  location.reload();
+}
+

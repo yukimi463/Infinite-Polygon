@@ -17,6 +17,9 @@
 
   <!-- ゲームUI -->
   <div class="total-counter" id="totalCounter">所持金: 0</div>
+  <div id="autoToggleContainer"></div>
+  <div id="modeToggleContainer"></div>
+
   <h1>Infinite Polygon</h1>
 
   <!-- 🌕 円度ゲージ表示 -->
@@ -25,10 +28,38 @@
     <div id="roundnessFill"></div>
   </div>
 
-  <!-- 🧘‍♂️ 瞑想モードボタン追加 -->
-  <div class="mode-buttons" style="margin-top: 8px;">
-    <button id="meditationModeBtn" class="auto-btn">瞑想モード</button>
-    <button id="accelerationModeBtn" class="auto-btn">加速モード</button>
+  <!-- 🧭 モード変更モーダル -->
+  <div id="modeModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>🧭 モード選択</h2>
+
+      <div class="feature-list">
+        <!-- 通常モード -->
+        <div class="feature-item">
+          <h3>通常モード</h3>
+          <p>標準状態です。</p>
+          <button onclick="selectMode('normal')">選択</button>
+        </div>
+
+        <!-- 瞑想モード -->
+        <div class="feature-item" id="meditationModeItem">
+          <h3>瞑想モード</h3>
+          <p>ゆっくりカウント（クールダウン効果）</p>
+          <p class="cost">💰 コスト: 10,000</p>
+          <button onclick="unlockMode('meditation', 10000)">解放</button>
+        </div>
+
+        <!-- 加速モード -->
+        <div class="feature-item" id="accelerationModeItem">
+          <h3>加速モード</h3>
+          <p>短時間クリック倍率2倍</p>
+          <p class="cost">💰 コスト: 100,000</p>
+          <button onclick="unlockMode('acceleration', 100000)">解放</button>
+        </div>
+      </div>
+
+      <button class="close-btn" onclick="closeModeModal()">閉じる</button>
+    </div>
   </div>
 
   <div id="gameWrapper" style="display: flex; flex-direction: row; align-items: center;">
@@ -42,33 +73,71 @@
       <button id="powerupBtn" class="auto-btn" disabled>
           強化する（Lv.<span id="powerupLevelText">0</span> コスト: <span id="powerupCostText">1</span>）
       </button>
-      <button id="autoBtn" class="auto-btn" disabled>
-          オートカウント（所持金100で解放）
-      </button>
       <button id="rainbowBtn" class="auto-btn" disabled>
           虹色変色（コスト: <span id="rainbowCostText">10</span>）
       </button>
   </div>
 
+  <!-- 🔓 機能解放ボタン -->
+  <div style="margin-top:16px;">
+    <button id="unlockFeatureBtn" class="auto-btn">🔓 機能解放</button>
+  </div>
+
+  <!-- 🔓 機能解放モーダル -->
+  <div id="unlockModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>🔓 機能解放</h2>
+      <div class="feature-list">
+        <!-- オートカウント -->
+        <div class="feature-item" id="feature-auto">
+          <h3>オートカウント機能</h3>
+          <p>一定間隔で自動的にクリックします。</p>
+          <p class="cost">💰 コスト: 100</p>
+          <button onclick="unlockFeature('autoCount', 100)">解放</button>
+        </div>
+
+        <!-- モード変更 -->
+        <div class="feature-item" id="feature-mode">
+          <h3>モード変更機能</h3>
+          <p>瞑想・加速など、特別なモードを切り替え可能にします。</p>
+          <p class="cost">💰 コスト: 10,000</p>
+          <button onclick="unlockFeature('modeChange', 10000)">解放</button>
+        </div>
+
+        <!-- イベント -->
+        <div class="feature-item" id="feature-event">
+          <h3>イベント機能</h3>
+          <p>頂点共鳴イベントなどの特別イベントを開放します。</p>
+          <p class="cost">💰 コスト: 100,000</p>
+          <button onclick="unlockFeature('eventResonance', 100000)">解放</button>
+        </div>
+      </div>
+      <button class="close-btn" onclick="closeUnlockModal()">閉じる</button>
+    </div>
+  </div>
+
+
   <!-- 💾 セーブ・ロードボタン -->
   <div style="margin-top:16px;">
     <button class="save-btn" onclick="saveGame()">💾 セーブ</button>
     <button class="load-btn" onclick="loadGame()">📂 ロード</button>
+    <button class="reset-btn" onclick="resetGameData()">🗑️ データリセット</button>
   </div>
 
-  <script src="variables.js"></script>
-  <script src="utils.js"></script>
-  <script src="unlock.js"></script>
-  <script src="polygonCore.js"></script>
-  <script src="polyhedron.js"></script>
-  <script src="gameLogic.js"></script>
-  <script src="autoCount.js"></script>
-  <script src="rainbow.js"></script>
-  <script src="saveload.js"></script>
-  <script src="modeMeditation.js"></script>
-  <script src="modeAcceleration.js"></script>
-  <script src="modeController.js"></script>
-  <script src="main.js"></script>
+<script src="variables.js"></script>
+<script src="utils.js"></script>
+<script src="polygonCore.js"></script>
+<script src="polyhedron.js"></script>
+<script src="gameLogic.js"></script>
+<script src="autoCount.js"></script>
+<script src="rainbow.js"></script>
+<script src="saveload.js"></script>
+<script src="modeMeditation.js"></script>
+<script src="modeAcceleration.js"></script>
+<script src="modeController.js"></script>
+<script src="unlock.js"></script> <!-- 👈 ここを modeController の後ろへ -->
+<script src="main.js"></script>
+
 
 </body>
 </html>

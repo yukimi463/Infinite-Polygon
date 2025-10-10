@@ -18,7 +18,6 @@ window.addEventListener("DOMContentLoaded", () => {
   // 🔘 UI更新関数
   // ===============================
   function updateButtonStates() {
-    console.log("🧩 updateButtonStates:", modeState.current);
     switch (modeState.current) {
         
       case "meditation":
@@ -127,3 +126,98 @@ setInterval(() => {
 }, 1000);
 
 });
+
+// ===============================
+// 🧭 モード切替処理
+// ===============================
+function openModeModal() {
+  document.getElementById("modeModal").classList.remove("hidden");
+  updateModeModal();
+}
+
+function closeModeModal() {
+  document.getElementById("modeModal").classList.add("hidden");
+}
+
+function unlockMode(mode, cost) {
+  if (totalCount < cost) {
+    alert("コインが足りません！");
+    return;
+  }
+  const key = mode + "Mode";
+  if (window.features[key]) {
+    alert("すでに解放済みです！");
+    return;
+  }
+
+  totalCount -= cost;
+  window.features[key] = true;
+  localStorage.setItem("features", JSON.stringify(window.features));
+  document.getElementById("totalCounter").textContent = `所持金: ${totalCount}`;
+  updateModeModal();
+  alert(mode === "meditation" ? "瞑想モードを解放しました！" : "加速モードを解放しました！");
+}
+
+function updateModeModal() {
+  const f = window.features || {};
+  const meditationItem = document.getElementById("meditationModeItem");
+  const accelItem = document.getElementById("accelerationModeItem");
+
+  const meditationBtn = meditationItem.querySelector("button");
+  const accelBtn = accelItem.querySelector("button");
+
+  if (f.meditationMode) {
+    meditationBtn.textContent = "選択";
+    meditationBtn.onclick = () => selectMode("meditation");
+  } else {
+    meditationBtn.textContent = "解放";
+    meditationBtn.disabled = totalCount < 10000;
+  }
+
+  if (f.accelerationMode) {
+    accelBtn.textContent = "選択";
+    accelBtn.onclick = () => selectMode("acceleration");
+  } else {
+    accelBtn.textContent = "解放";
+    accelBtn.disabled = totalCount < 100000;
+  }
+}
+
+function selectMode(mode) {
+  // すべてのモードをリセット（重複動作防止）
+  if (typeof window.stopMeditation === "function") window.stopMeditation();
+  if (typeof window.stopAccelerationExternally === "function") window.stopAccelerationExternally();
+
+  switch (mode) {
+    case "meditation":
+      // 瞑想モード開始
+      if (typeof window.startMeditation === "function") {
+        window.startMeditation();
+        window.currentMode = "meditation";
+        alert("🧘‍♂️ 瞑想モードを開始しました。");
+      } else {
+        console.warn("⚠️ startMeditation 関数が見つかりません。");
+      }
+      break;
+
+    case "acceleration":
+      // 加速モード開始
+      if (typeof window.startAccelerationExternally === "function") {
+        window.startAccelerationExternally();
+        window.currentMode = "acceleration";
+        alert("⚡ 加速モードを開始しました。");
+      } else {
+        console.warn("⚠️ startAccelerationExternally 関数が見つかりません。");
+      }
+      break;
+
+    default:
+      // 通常モードに戻る
+      window.currentMode = "normal";
+      alert("🔄 通常モードに戻りました。");
+      break;
+  }
+
+  closeModeModal();
+}
+

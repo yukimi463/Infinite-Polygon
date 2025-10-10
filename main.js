@@ -8,5 +8,4 @@ window.onload = function() {
     updatePowerupBtn();
     updateRainbowBtn();
     updateRoundness(); // ← これを追加
-    checkAutoUnlock();
 };
