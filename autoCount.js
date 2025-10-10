@@ -61,7 +61,6 @@ function startAutoCount() {
     }, 1000);
   }
 
-  console.log("▶️ オートカウント開始");
 }
 
 // ⏹ 停止
@@ -69,5 +68,4 @@ function stopAutoCount() {
   clearInterval(autoInterval);
   autoInterval = null;
   autoCounting = false;
-  console.log("⏹ オートカウント停止");
 }
