@@ -1,0 +1,49 @@
+body {
+    margin: 0;
+    overscroll-behavior: contain;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: none;
+    color: white;
+    overflow: hidden;
+
+    /* 宇宙の深いグラデーション */
+    background: radial-gradient(circle at 20% 30%, #0d1b4c 0%, #000010 80%);
+    background-attachment: fixed;
+}
+
+/* タイトルを装飾 */
+h1 {
+    position: relative;
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    font-size: 3.5rem;
+    font-weight: bold;
+    letter-spacing: 0.15em;
+    color: #fff;
+    text-shadow:
+        0 0 10px #fff,
+        0 0 20px #4fc3f7,
+        0 0 40px #81d4fa,
+        0 0 80px #e1f5fe;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+h1::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%);
+    transform: translateY(-50%);
+    filter: blur(30px);
+    z-index: -1;
+}
+
+/* ===== スマホ操作最適化 ===== */
+button, .polygon {
+    touch-action: manipulation; /* ダブルタップズーム防止 */
+    -webkit-tap-highlight-color: transparent; /* タップ枠消す */
+}

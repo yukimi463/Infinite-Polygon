@@ -1,0 +1,79 @@
+/* ★ 星屑層 */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: transparent url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+    opacity: 0.25;
+    z-index: -3;
+}
+
+/* 🌌 銀河の渦（ゆっくり回転） */
+body::after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 1200px;
+    height: 1200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%),
+                radial-gradient(circle at 70% 30%, rgba(255,200,255,0.6), transparent 70%),
+                radial-gradient(circle at 30% 70%, rgba(100,200,255,0.5), transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(80px);
+    animation: rotateGalaxy 120s linear infinite;
+    z-index: -2;
+}
+
+@keyframes rotateGalaxy {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* 🌈 オーロラの光 */
+.aurora {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 120%;
+    height: 120%;
+    background: conic-gradient(
+        from 90deg,
+        rgba(255, 0, 255, 0.15),
+        rgba(0, 255, 255, 0.25),
+        rgba(0, 255, 100, 0.15),
+        rgba(255, 0, 255, 0.15)
+    );
+    mix-blend-mode: screen;
+    filter: blur(120px);
+    animation: moveAurora 20s ease-in-out infinite alternate;
+    z-index: -1;
+}
+
+@keyframes moveAurora {
+    0% { transform: translate(-10%, -10%) rotate(0deg); opacity: 0.4; }
+    100% { transform: translate(10%, 10%) rotate(20deg); opacity: 0.7; }
+}
+
+/* 🌠 流れ星 */
+.shooting-star {
+    position: fixed;
+    width: 2px;
+    height: 100px;
+    background: linear-gradient(45deg, white, rgba(255,255,255,0));
+    opacity: 0.8;
+    transform: rotate(45deg);
+    animation: shooting 3s linear infinite;
+    z-index: 0;
+}
+
+.shooting-star:nth-child(1) { top: 15%; left: 85%; animation-delay: 0s; }
+.shooting-star:nth-child(2) { top: 40%; left: 70%; animation-delay: 1.2s; }
+.shooting-star:nth-child(3) { top: 60%; left: 90%; animation-delay: 2.3s; }
+
+@keyframes shooting {
+    0%   { transform: translate(0, 0) rotate(45deg); opacity: 0; }
+    10%  { opacity: 1; }
+    100% { transform: translate(-1000px, 1000px) rotate(45deg); opacity: 0; }
+}
