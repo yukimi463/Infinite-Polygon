@@ -1,8 +1,10 @@
 function saveGame() {
+  const now = new Date();
   const data = {
     sides, count, totalCount, clickValue,
     evolveCost, powerupLevel, powerupCost,
     miniUnlock, polyhedronUnlock,
+    saveTime: now.toLocaleString(),
     miniPolygons: miniPolygons.map(p => ({
       count: p._countObj.value,
       clickValue: p.clickValue,
@@ -13,7 +15,7 @@ function saveGame() {
   alert("宇宙の記録が保存されました。");
 }
 
-function showStatusOverlay() {
+function showStatusOverlay(saveTime) {
   const overlay = document.createElement('div');
   overlay.className = 'status-overlay';
   overlay.innerHTML = `
@@ -24,6 +26,7 @@ function showStatusOverlay() {
       <p>クリック値：${clickValue}</p>
       <p>強化Lv：${powerupLevel}</p>
       <p>${miniPolygons.length}個のミニ多角形が活動中</p>
+      ${saveTime ? `<p class="save-time">🕒 最終記録日時：${saveTime}</p>` : ""}
     </div>
   `;
   document.body.appendChild(overlay);
@@ -76,7 +79,7 @@ function loadGame() {
   updateRoundness();
 
   flashBackground();
-  showStatusOverlay();
+  showStatusOverlay(data.saveTime);
 }
 
 function resetGameData() {
