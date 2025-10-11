@@ -509,14 +509,6 @@ body.acceleration-active {
   opacity: 0.9;
 }
 
-/* 🧭 モード変更ボタン */
-#modeToggleContainer {
-  position: absolute;
-  top: 110px; /* AUTOの下 */
-  right: 20px;
-  z-index: 100;
-}
-
 .mode-btn {
   background: linear-gradient(135deg, #8e44ad, #9b59b6);
   border: none;

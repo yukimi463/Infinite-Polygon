@@ -19,7 +19,6 @@ window.addEventListener("DOMContentLoaded", () => {
   // ===============================
   function updateButtonStates() {
     switch (modeState.current) {
-        
       case "meditation":
         meditationBtn.disabled = false;
         meditationBtn.textContent = "瞑想解除";
@@ -46,7 +45,6 @@ window.addEventListener("DOMContentLoaded", () => {
   // 🧘‍♂️ 瞑想モード操作
   // ===============================
   meditationBtn.addEventListener("click", () => {
-    // 🚫 加速中は完全ブロック
     if (modeState.current === "acceleration" || window.accelerationMode) {
       console.warn("⚠️ 加速中のため瞑想モードは使用できません");
       return;
@@ -73,7 +71,6 @@ window.addEventListener("DOMContentLoaded", () => {
   // ⚡ 加速モード操作
   // ===============================
   accelBtn.addEventListener("click", () => {
-    // 🚫 瞑想中は加速禁止
     if (modeState.current === "meditation" || window.meditationMode) {
       console.warn("⚠️ 瞑想中のため加速モードは使用できません");
       return;
@@ -85,46 +82,43 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   function startAccelerationExternally() {
-  console.log("🎮 加速モード開始要求: current =", modeState.current);
-  modeState.current = "acceleration";
-  updateButtonStates();
-  console.log("🎮 startAccelerationExternally → state:", modeState.current);
+    console.log("🎮 加速モード開始要求: current =", modeState.current);
+    modeState.current = "acceleration";
+    updateButtonStates();
+    window.currentModeState = "acceleration";
 
-  // 🔹 Controllerのstateをグローバルに共有（他ファイルから参照可能にする）
-  window.currentModeState = "acceleration";
+    if (typeof window.startAcceleration === "function") window.startAcceleration();
 
-  if (typeof window.startAcceleration === "function") window.startAcceleration();
-
-  const duration = window.accelerationDuration || 10000;
-  setTimeout(() => {
-    if (!window.accelerationMode) {
-      modeState.current = "none";
-      window.currentModeState = "none"; // 同期解除
-      updateButtonStates();
-    }
-  }, duration + 200);
-}
+    const duration = window.accelerationDuration || 10000;
+    setTimeout(() => {
+      if (!window.accelerationMode) {
+        modeState.current = "none";
+        window.currentModeState = "none";
+        updateButtonStates();
+      }
+    }, duration + 200);
+  }
 
   window.stopAccelerationExternally = function () {
-  if (modeState.current !== "acceleration") return;
-  modeState.current = "none";
-  if (typeof window.endAcceleration === "function") window.endAcceleration();
-  updateButtonStates();
-};
+    if (modeState.current !== "acceleration") return;
+    modeState.current = "none";
+    if (typeof window.endAcceleration === "function") window.endAcceleration();
+    updateButtonStates();
+  };
 
   // ===============================
   // 🩺 クールダウン監視（再有効化）
   // ===============================
-  // ===============================
-// 🩺 クールダウン監視（再有効化）
-// ===============================
-setInterval(() => {
-  // ✅ 現在「none」で、かつ実際にボタンが使用可能なときだけ更新
-  if (modeState.current === "none" && window.accelerationReady && !window.accelerationMode && !window.meditationMode) {
-    updateButtonStates();
-  }
-}, 1000);
-
+  setInterval(() => {
+    if (
+      modeState.current === "none" &&
+      window.accelerationReady &&
+      !window.accelerationMode &&
+      !window.meditationMode
+    ) {
+      updateButtonStates();
+    }
+  }, 1000);
 });
 
 // ===============================
@@ -144,6 +138,7 @@ function unlockMode(mode, cost) {
     alert("コインが足りません！");
     return;
   }
+
   const key = mode + "Mode";
   if (window.features[key]) {
     alert("すでに解放済みです！");
@@ -152,68 +147,115 @@ function unlockMode(mode, cost) {
 
   totalCount -= cost;
   window.features[key] = true;
-  localStorage.setItem("features", JSON.stringify(window.features));
-  document.getElementById("totalCounter").textContent = `所持金: ${totalCount}`;
+  if (typeof saveFeatures === "function") saveFeatures();
+
+  // 💰 ショートスケール表記を維持
+  document.getElementById("totalCounter").textContent = `所持金: ${formatNumber(totalCount)}`;
+
   updateModeModal();
-  alert(mode === "meditation" ? "瞑想モードを解放しました！" : "加速モードを解放しました！");
+
+  // 🔹 モード変更ボタン自動生成（modeChange機能解放済み時）
+  if (window.features.modeChange && typeof createModeToggleButton === "function") {
+    createModeToggleButton();
+  }
+
+  alert(mode === "meditation" ? "🧘‍♂️ 瞑想モードを解放しました！" : "⚡ 加速モードを解放しました！");
 }
 
 function updateModeModal() {
   const f = window.features || {};
+  const current = window.currentMode || "none";
+
+  // 対象アイテム取得
+  const normalItem = document.getElementById("modeModalNormal");
   const meditationItem = document.getElementById("meditationModeItem");
   const accelItem = document.getElementById("accelerationModeItem");
 
+  const normalBtn = normalItem.querySelector("button");
   const meditationBtn = meditationItem.querySelector("button");
   const accelBtn = accelItem.querySelector("button");
 
-  if (f.meditationMode) {
-    meditationBtn.textContent = "選択";
-    meditationBtn.onclick = () => selectMode("meditation");
-  } else {
-    meditationBtn.textContent = "解放";
-    meditationBtn.disabled = totalCount < 10000;
+  // 🔹 すべてのボタンからクラスをリセット
+  [meditationBtn, accelBtn].forEach(btn => {
+    btn.classList.remove("lock", "unlocked", "selected");
+    btn.disabled = false;
+  });
+
+  if (true) { // 通常モードは常に解放済み扱い
+    if (current === "normal") {
+      // 現在選択中 → グレー
+      normalBtn.classList.add("selected");
+      normalBtn.textContent = "選択中";
+    } else {
+      // 解放済み（未選択）→ 青
+      normalBtn.classList.add("unlocked");
+      normalBtn.textContent = "選択";
+      normalBtn.onclick = () => selectMode("normal");
+    }
   }
 
-  if (f.accelerationMode) {
-    accelBtn.textContent = "選択";
-    accelBtn.onclick = () => selectMode("acceleration");
+  // ===============================
+  // 🧘‍♂️ 瞑想モード
+  // ===============================
+  if (f.meditationMode) {
+    if (current === "meditation") {
+      // 現在選択中 → グレー
+      meditationBtn.classList.add("selected");
+      meditationBtn.textContent = "選択中";
+    } else {
+      // 解放済み（未選択）→ 青
+      meditationBtn.classList.add("unlocked");
+      meditationBtn.textContent = "選択";
+      meditationBtn.onclick = () => selectMode("meditation");
+    }
   } else {
+    // 未解放 → 緑
+    meditationBtn.classList.add("lock");
+    meditationBtn.textContent = "解放";
+    meditationBtn.onclick = () => unlockMode("meditation", 10000);
+  }
+
+  // ===============================
+  // ⚡ 加速モード
+  // ===============================
+  if (f.accelerationMode) {
+    if (current === "acceleration") {
+      accelBtn.classList.add("selected");
+      accelBtn.textContent = "選択中";
+    } else {
+      accelBtn.classList.add("unlocked");
+      accelBtn.textContent = "選択";
+      accelBtn.onclick = () => selectMode("acceleration");
+    }
+  } else {
+    accelBtn.classList.add("lock");
     accelBtn.textContent = "解放";
-    accelBtn.disabled = totalCount < 100000;
+    accelBtn.onclick = () => unlockMode("acceleration", 100000);
   }
 }
 
 function selectMode(mode) {
-  // すべてのモードをリセット（重複動作防止）
   if (typeof window.stopMeditation === "function") window.stopMeditation();
   if (typeof window.stopAccelerationExternally === "function") window.stopAccelerationExternally();
 
+  window.currentMode = mode; // ← これを関数冒頭に追加（確実に更新）
+
   switch (mode) {
     case "meditation":
-      // 瞑想モード開始
       if (typeof window.startMeditation === "function") {
         window.startMeditation();
-        window.currentMode = "meditation";
         alert("🧘‍♂️ 瞑想モードを開始しました。");
-      } else {
-        console.warn("⚠️ startMeditation 関数が見つかりません。");
       }
       break;
 
     case "acceleration":
-      // 加速モード開始
       if (typeof window.startAccelerationExternally === "function") {
         window.startAccelerationExternally();
-        window.currentMode = "acceleration";
         alert("⚡ 加速モードを開始しました。");
-      } else {
-        console.warn("⚠️ startAccelerationExternally 関数が見つかりません。");
       }
       break;
 
     default:
-      // 通常モードに戻る
-      window.currentMode = "normal";
       alert("🔄 通常モードに戻りました。");
       break;
   }
@@ -221,3 +263,12 @@ function selectMode(mode) {
   closeModeModal();
 }
 
+// ===============================
+// 🚀 起動時に既存解放状態を復元
+// ===============================
+window.addEventListener("load", () => {
+  const f = window.features || {};
+  if (f.modeChange && typeof createModeToggleButton === "function") {
+    createModeToggleButton();
+  }
+});
