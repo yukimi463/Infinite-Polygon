@@ -271,4 +271,7 @@ window.addEventListener("load", () => {
   if (f.modeChange && typeof createModeToggleButton === "function") {
     createModeToggleButton();
   }
+  if (typeof checkMiniUnlock === "function") {
+    checkMiniUnlock(); // ← リロード直後にも状態復元
+  }
 });

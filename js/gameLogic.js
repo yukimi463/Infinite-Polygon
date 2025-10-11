@@ -6,7 +6,6 @@ function handleClick() {
     updateTotalCounter();
     updateEvolveBtn();
     updatePowerupBtn();
-    checkMiniUnlock();
     checkPolyhedronUnlock(); // ←追加
     if (miniUnlock && Math.random() < 0.01) {
         const miniDiv = createPolygon(

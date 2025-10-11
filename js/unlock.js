@@ -1,10 +1,12 @@
 function checkMiniUnlock() {
-            if (!miniUnlock && totalCount >= 1000) {
-                miniUnlock = true;
-                // 必要なら通知など追加
-                alert("ミニ正n角形生成機能が解放されました！");
-            }
-        }
+  // すでに解放済みなら何もしない
+  if (miniUnlock) return;
+
+  // 機能が実際に解放されたか確認
+  if (window.features && window.features.miniPolygon) {
+    miniUnlock = true;
+  }
+}
 
 function checkPolyhedronUnlock() {
     // 1Gg = 1e100
@@ -42,6 +44,7 @@ function unlockFeature(key, cost) {
     alert("コインが足りません！");
     return;
   }
+
   if (window.features[key]) {
     alert("すでに解放済みです！");
     return;
@@ -53,9 +56,28 @@ function unlockFeature(key, cost) {
   document.getElementById("totalCounter").textContent = `所持金: ${totalCount}`;
   updateUnlockButtons();
 
-  // 解放時の追加処理
-  if (key === "autoCount") createAutoToggleButton();
-  alert(`${key} を解放しました！`);
+  // ✅ 機能名を日本語に変換
+  const featureNames = {
+    autoCount: "オートカウント機能",
+    miniPolygon: "ミニ正多角形生成機能",
+    rainbow: "虹色変色機能",
+    modeChange: "モード変更機能",
+    eventResonance: "イベント機能"
+  };
+
+  const name = featureNames[key] || key;
+
+  // ✅ 解放時の個別処理
+  if (key === "autoCount" && typeof createAutoToggleButton === "function") {
+    createAutoToggleButton();
+  }
+
+  if (key === "miniPolygon" && typeof checkMiniUnlock === "function") {
+    checkMiniUnlock();
+  }
+
+  // ✅ 汎用メッセージ
+  alert(`${name}を解放しました！`);
 }
 
 // ===============================
@@ -66,6 +88,8 @@ function updateUnlockButtons() {
   const features = window.features;
   const map = {
     autoCount: "feature-auto",
+    miniPolygon: "feature-mini",
+    rainbow: "feature-rainbow",
     modeChange: "feature-mode",
     eventResonance: "feature-event",
   };

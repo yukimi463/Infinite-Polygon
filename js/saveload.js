@@ -63,6 +63,10 @@ function loadGame() {
           "linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet)";
       }
     });
+
+    if (typeof checkMiniUnlock === "function") {
+    checkMiniUnlock(); // ← ロードボタン経由でも反映
+  }
   }
 
   updateTotalCounter();
