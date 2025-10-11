@@ -129,3 +129,111 @@
   cursor: default;
   box-shadow: inset 0 0 6px rgba(255,255,255,0.3);
 }
+
+/* =============================
+   各機能カード専用デザイン
+   ============================= */
+
+/* =============================
+   🌌 各機能カード：宇宙エネルギー版
+   ============================= */
+
+/* 🌿 オートカウント機能：生命の律動（緑の脈動） */
+#feature-auto {
+  background: radial-gradient(circle at 30% 30%, #0aff80, #004d1a 80%);
+  border: 1px solid rgba(80, 255, 140, 0.6);
+  box-shadow:
+    0 0 20px rgba(0, 255, 120, 0.35),
+    inset 0 0 12px rgba(0, 255, 100, 0.25);
+  animation: autoPulse 4s ease-in-out infinite;
+}
+@keyframes autoPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,255,120,0.35), inset 0 0 12px rgba(0,255,100,0.25); }
+  50% { box-shadow: 0 0 32px rgba(0,255,180,0.6), inset 0 0 16px rgba(0,255,140,0.35); }
+}
+
+/* 🔹 ミニ正多角形生成機能：創生の粒子（青紫の光子） */
+#feature-mini {
+  background: radial-gradient(circle at 70% 20%, #4a6cff, #050014 80%);
+  border: 1px solid rgba(130, 180, 255, 0.5);
+  box-shadow:
+    0 0 25px rgba(90, 160, 255, 0.3),
+    inset 0 0 12px rgba(140, 200, 255, 0.25);
+  position: relative;
+}
+#feature-mini::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://transparenttextures.com/patterns/stardust.png");
+  opacity: 0.3;
+  mix-blend-mode: lighten;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* 🌈 虹色変色機能：光の波動（動く虹） */
+#feature-rainbow {
+  background: linear-gradient(
+    135deg,
+    #ff0040,
+    #ffa500,
+    #fff100,
+    #00ff6a,
+    #00bfff,
+    #4b00ff,
+    #ff00e6
+  );
+  background-size: 400% 400%;
+  border: none;
+  color: #fff;
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 0.4),
+    inset 0 0 15px rgba(255, 255, 255, 0.2);
+  animation: rainbowShift 6s linear infinite;
+}
+@keyframes rainbowShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🧘 モード変更機能：静寂の虚空（紫のオーロラ） */
+#feature-mode {
+  background: radial-gradient(circle at 50% 30%, #b380ff, #2a004d 80%);
+  border: 1px solid rgba(210, 150, 255, 0.4);
+  box-shadow:
+    0 0 30px rgba(160, 100, 255, 0.4),
+    inset 0 0 14px rgba(180, 120, 255, 0.3);
+  position: relative;
+}
+#feature-mode::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.15) 100%);
+  mix-blend-mode: overlay;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* 🌌 イベント機能：頂点共鳴（回転するエネルギー渦） */
+#feature-event {
+  background: conic-gradient(
+    from 45deg,
+    #8c00ff,
+    #ff00cc,
+    #00ffff,
+    #8c00ff
+  );
+  background-size: 200% 200%;
+  border: 1px solid rgba(255, 200, 255, 0.4);
+  box-shadow:
+    0 0 40px rgba(255, 150, 255, 0.4),
+    inset 0 0 16px rgba(255, 255, 255, 0.3);
+  animation: rotateEvent 12s linear infinite;
+}
+@keyframes rotateEvent {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
