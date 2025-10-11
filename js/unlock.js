@@ -53,7 +53,8 @@ function unlockFeature(key, cost) {
   totalCount -= cost;
   window.features[key] = true;
   localStorage.setItem("features", JSON.stringify(window.features));
-  document.getElementById("totalCounter").textContent = `所持金: ${totalCount}`;
+  document.getElementById("totalCounter").textContent =
+  `所持金: ${formatNumber(totalCount)}`;
   updateUnlockButtons();
 
   // ✅ 機能名を日本語に変換
