@@ -274,4 +274,7 @@ window.addEventListener("load", () => {
   if (typeof checkMiniUnlock === "function") {
     checkMiniUnlock(); // ← リロード直後にも状態復元
   }
+  if (window.features && window.features.rainbow) {
+    createRainbowButton(); // ← 再生成
+  }
 });

@@ -87,8 +87,12 @@ function updatePowerupBtn() {
 }
 
 function updateRainbowBtn() {
-    rainbowBtn.disabled = totalCount < rainbowCost || miniPolygons.length === 0;
-    rainbowCostText.textContent = formatNumber(rainbowCost);
+  const rainbowBtn = document.getElementById("rainbowBtn");
+  const rainbowCostText = document.getElementById("rainbowCostText");
+  if (!rainbowBtn || !rainbowCostText) return; // ← 存在チェックを追加
+
+  rainbowBtn.disabled = totalCount < rainbowCost || miniPolygons.length === 0;
+  rainbowCostText.textContent = formatNumber(rainbowCost);
 }
 
 function updateRoundness() {

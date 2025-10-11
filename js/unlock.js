@@ -76,6 +76,10 @@ function unlockFeature(key, cost) {
     checkMiniUnlock();
   }
 
+  if (key === "rainbow") {
+    createRainbowButton();
+  }
+
   // ✅ 汎用メッセージ
   alert(`${name}を解放しました！`);
 }
@@ -173,4 +177,3 @@ window.addEventListener("load", () => {
   if (f.autoCount) createAutoToggleButton();
   if (f.modeChange) createModeButton();
 });
-

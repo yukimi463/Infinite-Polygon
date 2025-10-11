@@ -69,7 +69,6 @@ function createPolygon(sides, count, isMini = false, miniClickValue = 1) {
             updateEvolveBtn();
             updatePowerupBtn();
             updateRainbowBtn();
-            checkAutoUnlock();
             e.stopPropagation();
         });
         miniPolygons.push({ polygon, countRef: () => countObj.value, clickValue: miniClickValue, _countObj: countObj, isRainbow: false, rainbowTimeout: null });
