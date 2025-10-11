@@ -2,6 +2,8 @@ function createRainbowButton() {
   // すでにある場合は作らない
   if (document.getElementById("rainbowBtn")) return;
 
+  window.rainbowCost = evolveCost * 10;
+
   // どこに挿入するか（進化・強化ボタン群のすぐ下に挿入）
   const container = document.querySelector("div[style*='margin-top:24px;']");
   if (!container) return;
@@ -10,7 +12,7 @@ function createRainbowButton() {
   const rainbowBtn = document.createElement("button");
   rainbowBtn.id = "rainbowBtn";
   rainbowBtn.className = "auto-btn";
-  rainbowBtn.innerHTML = `虹色変色（コスト: <span id="rainbowCostText">10</span>）`;
+  rainbowBtn.innerHTML = `虹色変色（コスト: <span id="rainbowCostText">${formatNumber(rainbowCost)}</span>）`;
   rainbowBtn.disabled = false;
 
   // 🌈 イベント処理統合（rainbow.jsから移植）
