@@ -2,19 +2,22 @@ function triggerVertexResonance() {
   if (meteorActive) return; // 重複防止
   meteorActive = true;
 
-  // 🌠 流星群演出開始
-  createMeteorShower();
-
   // 頂点をランダムで選択
   const vertexCount = getPolygonPoints(sides).coords.length;
-  const glowCount = Math.floor(Math.random() * 3) + 2; // 2～4個が光る
+  const glowCount = Math.floor(Math.random() * vertexCount) + 1; // 1～頂点数までランダム
   glowingVertices = [];
 
-  for (let i = 0; i < glowCount; i++) {
-    const index = Math.floor(Math.random() * vertexCount);
-    glowingVertices.push(index);
+  const available = Array.from({ length: vertexCount }, (_, i) => i); // [0,1,2,3,...]
+  for (let i = 0; i < glowCount && available.length > 0; i++) {
+    const randomIndex = Math.floor(Math.random() * available.length);
+    const chosen = available.splice(randomIndex, 1)[0]; // 取り出して配列から削除
+    glowingVertices.push(chosen);
   }
 
+  // 🌠 流星群演出開始（頂点数と連動）
+  createMeteorShower(glowCount);
+
+  // 頂点発光
   renderGlowingVertices();
 
   // 5秒後に終了
@@ -71,21 +74,41 @@ function clearGlowingVertices() {
   glowingVertices = [];
 }
 
-function createMeteorShower() {
+function createMeteorShower(glowCount = 5) {
   const sky = document.body;
-  for (let i = 0; i < 5; i++) {
+
+  // ベースとなる流星の出現位置パターン
+  const basePositions = [
+    { top: "10%", left: "80%" },
+    { top: "30%", left: "70%" },
+    { top: "50%", left: "90%" },
+    { top: "60%", left: "60%" },
+    { top: "80%", left: "85%" },
+  ];
+
+  // 光っている頂点の数だけループ
+  for (let i = 0; i < glowCount; i++) {
     const meteor = document.createElement("div");
     meteor.className = "meteor";
-    meteor.style.left = `${Math.random() * 100}%`;
-    meteor.style.animationDelay = `${Math.random() * 2}s`;
+
+    // ベース位置を参照（数が足りなければループ）
+    const pos = basePositions[i % basePositions.length];
+    meteor.style.top = pos.top;
+    meteor.style.left = pos.left;
+
+    // スタート時間をずらして流れるように
+    meteor.style.animationDelay = `${i * 0.6}s`;
+
     sky.appendChild(meteor);
-    setTimeout(() => meteor.remove(), 3000);
+
+    // アニメーション終了後に削除
+    setTimeout(() => meteor.remove(), 4000);
   }
 }
 
 // 自動的に一定確率で発生
 setInterval(() => {
-  if (Math.random() < 0.5) { // 約5%の確率で発生
+  if (Math.random() < 1) { // 約5%の確率で発生
     triggerVertexResonance();
   }
 }, 5000);

@@ -59,26 +59,39 @@ body.acceleration-active {
   font-size: 1.1rem;
 }
 
-/* 🌠 流星群 */
-.meteor {
-  position: fixed;
-  top: 0;
-  width: 2px;
-  height: 60px;
-  background: linear-gradient(180deg, white, transparent);
-  opacity: 0.8;
-  animation: meteorFall 1s linear forwards;
-  z-index: 50;
+/* 🌠 流れ星＆流星群 共通アニメーション */
+@keyframes shooting {
+  0%   { transform: translate(0, 0) rotate(45deg); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translate(-1000px, 1000px) rotate(45deg); opacity: 0; }
 }
 
-@keyframes meteorFall {
-  from {
-    transform: translate(0, 0) rotate(45deg);
-  }
-  to {
-    transform: translate(200px, 800px) rotate(45deg);
-    opacity: 0;
-  }
+/* 🌠 流れ星 */
+.shooting-star {
+  position: fixed;
+  width: 2px;
+  height: 100px;
+  background: linear-gradient(45deg, white, rgba(255,255,255,0));
+  opacity: 0.8;
+  transform: rotate(45deg);
+  animation: shooting 3s linear infinite;
+  z-index: 0;
+}
+
+.shooting-star:nth-child(2) { top: 15%; left: 85%; animation-delay: 0s; animation-duration: 3s; }
+.shooting-star:nth-child(3) { top: 40%; left: 70%; animation-delay: 1s; animation-duration: 3.4s; }
+.shooting-star:nth-child(4) { top: 60%; left: 90%; animation-delay: 2s; animation-duration: 2.8s; }
+
+/* 🌠 流星群（shooting-star風） */
+.meteor {
+  position: fixed;
+  width: 2px;
+  height: 100px;
+  background: linear-gradient(45deg, white, rgba(255,255,255,0));
+  opacity: 0.8;
+  transform: rotate(45deg);
+  animation: shooting 3s linear forwards; /* shooting を使用 */
+  z-index: 50;
 }
 
 /* 🌟 光る頂点 */
