@@ -28,10 +28,10 @@ window.accelerationCooldownTimer = null;
 // パラメータ初期化
 window.accelerationMultiplier ??= 2.0;
 window.accelerationDuration ??= 10000; // 10秒
-window.accelerationCooldown ??= 20000; // 20秒   // クールタイム(ms)
+window.accelerationCooldown ??= 5000; // 20秒   // クールタイム(ms)
 
 // 頂点共鳴関連
-window.accelEnergy = 0;        // 加速エネルギー
+window.accelEnergy ??= 0;        // 加速エネルギー
 window.meteorActive = false;   // 流星群イベント中かどうか
 window.glowingVertices = [];   // 光っている頂点のインデックス配列
 

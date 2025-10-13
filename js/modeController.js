@@ -80,46 +80,6 @@ window.addEventListener("DOMContentLoaded", () => {
       startAccelerationExternally();
     }
   });
-
-  function startAccelerationExternally() {
-    console.log("🎮 加速モード開始要求: current =", modeState.current);
-    modeState.current = "acceleration";
-    updateButtonStates();
-    window.currentModeState = "acceleration";
-
-    if (typeof window.startAcceleration === "function") window.startAcceleration();
-    const bonus = accelEnergy * 1000;
-    const duration = window.accelerationDuration + bonus || 10000;
-    accelEnergy = 0;
-    setTimeout(() => {
-      if (!window.accelerationMode) {
-        modeState.current = "none";
-        window.currentModeState = "none";
-        updateButtonStates();
-      }
-    }, duration + 200);
-  }
-
-  window.stopAccelerationExternally = function () {
-    if (modeState.current !== "acceleration") return;
-    modeState.current = "none";
-    if (typeof window.endAcceleration === "function") window.endAcceleration();
-    updateButtonStates();
-  };
-
-  // ===============================
-  // 🩺 クールダウン監視（再有効化）
-  // ===============================
-  setInterval(() => {
-    if (
-      modeState.current === "none" &&
-      window.accelerationReady &&
-      !window.accelerationMode &&
-      !window.meditationMode
-    ) {
-      updateButtonStates();
-    }
-  }, 1000);
 });
 
 // ===============================
@@ -251,8 +211,9 @@ function selectMode(mode) {
 
     case "acceleration":
       if (typeof window.startAccelerationExternally === "function") {
-        window.startAccelerationExternally();
+        
         alert("⚡ 加速モードを開始しました。");
+        window.startAccelerationExternally();
       }
       break;
 

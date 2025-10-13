@@ -62,10 +62,12 @@ function renderGlowingVertices(isMini = false) {
       accelEnergy += 1;
       dot.classList.add("collected");
       setTimeout(() => dot.remove(), 300);
+      console.log(`加速エネルギー +1 (現在: ${accelEnergy})`);
     });
 
     // wrapper内に追加
     wrapper.appendChild(dot);
+    updateAccelerationDescription();
   });
 }
 

@@ -4,7 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- 🌌 ページタイトル -->
   <title>Infinite Polygon</title>
+
+  <!-- 📜 ページ説明（これが重要）-->
+  <meta name="description" content="多角形を進化させて宇宙を目指すブラウザ育成ゲーム。Infinite Polygon。">
+
+  <!-- 🪐 SNS・共有用 -->
+  <meta property="og:title" content="Infinite Polygon">
+  <meta property="og:description" content="多角形を進化させて宇宙を目指すブラウザ育成ゲーム。">
+  <meta property="og:image" content="https://yourname.github.io/infinite-polygon/thumbnail.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourname.github.io/infinite-polygon/">
+  <meta name="twitter:card" content="summary_large_image">
+
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/background.css">
   <link rel="stylesheet" href="css/polygon.css">
@@ -58,7 +72,7 @@
         <!-- 加速モード -->
         <div class="feature-item" id="accelerationModeItem">
           <h3>加速モード</h3>
-          <p>短時間クリック倍率2倍</p>
+          <p id="accelerationDescription">10秒間クリック倍率2倍</p>
           <p class="cost">💰 コスト: 100,000</p>
           <button onclick="unlockMode('acceleration', 100000)">解放</button>
         </div>

@@ -17,6 +17,17 @@ window.startAcceleration = function () {
   window.autoSpeed *= window.accelerationMultiplier;
 
   console.log("⚡ 加速モード開始");
+  // 残り時間を毎秒コンソールに表示
+  const startTime = Date.now();
+  const bonus = accelEnergy * 1000;
+  const duration = (10000 + bonus); // ← ここで毎回リセットして新しく計算
+  accelerationDuration = duration;
+  const countdown = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, accelerationDuration - elapsed);
+    console.log(`⏱ 残り加速時間: ${(remaining / 1000).toFixed(1)} 秒`);
+    if (!window.accelerationMode || remaining <= 0) clearInterval(countdown);
+  }, 1000);
 
   // 効果終了タイマー
   window.accelerationTimer = setTimeout(() => {
@@ -72,3 +83,12 @@ window.startAccelerationExternally = function () {
   console.log("🎮 Controller → startAccelerationExternally 呼び出し");
   window.startAcceleration();
 };
+
+function updateAccelerationDescription() {
+  const base = 10;
+  const bonus = accelEnergy;
+  const total = base + bonus;
+  const desc = document.getElementById("accelerationDescription");
+  if (desc) desc.textContent = `${total}秒間クリック倍率2倍`;
+}
+
