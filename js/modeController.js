@@ -88,8 +88,9 @@ window.addEventListener("DOMContentLoaded", () => {
     window.currentModeState = "acceleration";
 
     if (typeof window.startAcceleration === "function") window.startAcceleration();
-
-    const duration = window.accelerationDuration || 10000;
+    const bonus = accelEnergy * 1000;
+    const duration = window.accelerationDuration + bonus || 10000;
+    accelEnergy = 0;
     setTimeout(() => {
       if (!window.accelerationMode) {
         modeState.current = "none";

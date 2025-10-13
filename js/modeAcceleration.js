@@ -2,17 +2,6 @@
 // ⚡ 加速モード制御（Controller連携対応版）
 // ===============================
 
-// ==== グローバル状態 ====
-window.accelerationMode = false;
-window.accelerationReady = true;
-window.accelerationTimer = null;
-window.accelerationCooldownTimer = null;
-
-// パラメータ初期化
-window.accelerationMultiplier ??= 2.0;
-window.accelerationDuration ??= 10000; // 10秒
-window.accelerationCooldown ??= 20000; // 20秒
-
 // ===== 開始 =====
 window.startAcceleration = function () {
   clearTimeout(window.accelerationTimer);

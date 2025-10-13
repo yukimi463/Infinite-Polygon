@@ -1,4 +1,4 @@
-let sides = 3;
+window.sides = 3;
 
 // ▼ window経由で共有したい変数は window. を付ける
 window.count = 0;
@@ -22,10 +22,18 @@ window.polyhedronUnlock = false; // 多面体解放フラグ
 
 // 加速モード関連変数
 window.accelerationMode = false;
-window.accelerationMultiplier = 2.0;   // 倍率
-window.accelerationDuration = 10000;   // 効果時間(ms)
-window.accelerationCooldown = 20000;   // クールタイム(ms)
 window.accelerationReady = true;
+window.accelerationTimer = null;
+window.accelerationCooldownTimer = null;
+// パラメータ初期化
+window.accelerationMultiplier ??= 2.0;
+window.accelerationDuration ??= 10000; // 10秒
+window.accelerationCooldown ??= 20000; // 20秒   // クールタイム(ms)
+
+// 頂点共鳴関連
+window.accelEnergy = 0;        // 加速エネルギー
+window.meteorActive = false;   // 流星群イベント中かどうか
+window.glowingVertices = [];   // 光っている頂点のインデックス配列
 
 const gameWrapper = document.getElementById('gameWrapper');
 const totalCounter = document.getElementById('totalCounter');
