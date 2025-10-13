@@ -3,8 +3,8 @@ function getPolygonPoints(sides) {
     const coords = [];
     for (let i = 0; i < sides; i++) {
         const angle = (2 * Math.PI * i) / sides - Math.PI / 2;
-        const x = 50 + 48 * Math.cos(angle);
-        const y = 50 + 48 * Math.sin(angle);
+        const x = 50 + 50 * Math.cos(angle);
+        const y = 50 + 50 * Math.sin(angle);
         points.push(`${x}% ${y}%`);
         coords.push({ x: x, y: y });
     }
@@ -41,17 +41,29 @@ function createPolygon(sides, count, isMini = false, miniClickValue = 1) {
         wrapper.style.width = "86px";
         wrapper.style.height = "86px";
         name.style.fontSize = "0.7rem";
-        name.style.marginBottom = "4px";
+        name.style.marginBottom = "0px";
     }
 
     wrapper.appendChild(polygon);
 
     coords.forEach(pt => {
-        const dot = document.createElement('div');
-        dot.className = 'vertex-dot';
-        dot.style.left = isMini ? `${pt.x * 0.66}px` : `${pt.x * 2}px`;
-        dot.style.top = isMini ? `${pt.y * 0.66}px` : `${pt.y * 2}px`;
-        polygon.appendChild(dot);
+    const dot = document.createElement('div');
+    dot.className = 'vertex-dot';
+
+    const baseSize = isMini ? 86 : 260; // wrapper基準
+    const polygonSize = isMini ? 66 : 200; // polygon基準
+
+    // polygon中心をwrapper中央に合わせる補正値
+    const offset = (baseSize - polygonSize) / 2;
+
+    // %→px換算 + 中心補正
+    const scale = polygonSize / 100;
+    const x = pt.x * scale + offset;
+    const y = pt.y * scale + offset + (isMini ? 4 : 8); // ←ここで微調整！
+
+    dot.style.left = `${x}px`;
+    dot.style.top = `${y}px`;
+    wrapper.appendChild(dot);
     });
 
     // ミニ多角形のクリックイベント
