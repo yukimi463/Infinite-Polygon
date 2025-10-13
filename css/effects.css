@@ -94,6 +94,20 @@ body.acceleration-active {
   z-index: 50;
 }
 
+.vertex-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 235, 59, 0.4); /* ✨ 薄い半透明イエロー */
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 200, 0.7); /* 柔らかい外枠 */
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  box-shadow:
+    0 0 6px rgba(255, 255, 150, 0.6),
+    0 0 12px rgba(255, 255, 150, 0.4); /* ほんのり発光 */
+}
+
 /* 🌟 光る頂点 */
 .vertex-glow {
   position: absolute;
