@@ -1,4 +1,8 @@
 function triggerVertexResonance() {
+  if (!window.features?.eventResonance) {
+    console.log("🚫 イベント機能未解放のため、頂点共鳴は発生しません。");
+    return;
+  }
   if (meteorActive) return; // 重複防止
   meteorActive = true;
 
@@ -110,7 +114,10 @@ function createMeteorShower(glowCount = 5) {
 
 // 自動的に一定確率で発生
 setInterval(() => {
-  if (Math.random() < 1) { // 約5%の確率で発生
+  // 🔹 イベント機能が解放されていない場合はスキップ
+  if (!window.features?.eventResonance) return;
+
+  if (Math.random() < 0.5) { // 約5%の確率で発生
     triggerVertexResonance();
   }
 }, 5000);

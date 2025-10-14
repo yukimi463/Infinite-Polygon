@@ -69,7 +69,14 @@ function loadGame() {
 
     if (typeof checkMiniUnlock === "function") {
     checkMiniUnlock(); // ← ロードボタン経由でも反映
-  }
+    }
+
+    if (window.features?.eventResonance) {
+      console.log("🪐 イベント機能：頂点共鳴イベント有効化中");
+    } else {
+      console.log("💤 イベント機能：未解放状態");
+    }
+
   }
 
   updateTotalCounter();
