@@ -12,14 +12,14 @@ function createRainbowButton() {
   const rainbowBtn = document.createElement("button");
   rainbowBtn.id = "rainbowBtn";
   rainbowBtn.className = "auto-btn";
-  rainbowBtn.innerHTML = `虹色変色（コスト: <span id="rainbowCostText">${formatNumber(rainbowCost)}</span>）`;
+  rainbowBtn.innerHTML = `虹色変色（解放コスト: <span id="rainbowCostText">${formatNumber(rainbowCost)}</span>）`;
   rainbowBtn.disabled = false;
 
   // 🌈 イベント処理統合（rainbow.jsから移植）
   rainbowBtn.addEventListener('pointerdown', function() {
     if (totalCount < rainbowCost || miniPolygons.length === 0) return;
 
-    // コスト減算
+    // 解放コスト減算
     totalCount -= rainbowCost;
     updateTotalCounter();
     updateRainbowBtn();
