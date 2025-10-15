@@ -30,6 +30,15 @@ function closeUnlockModal() {
   document.getElementById("unlockModal").classList.add("hidden");
 }
 
+document.getElementById("unlockFeatureBtn").addEventListener("click", () => {
+  document.getElementById("unlockModal").classList.remove("hidden");
+  updateUnlockButtons();
+});
+
+function closeUnlockModal() {
+  document.getElementById("unlockModal").classList.add("hidden");
+}
+
 // 🔐 機能状態を保存・読込
 if (!window.features) {
   window.features = JSON.parse(localStorage.getItem("features") || "{}");
@@ -170,6 +179,7 @@ unlockFeature = function (key, cost) {
   originalUnlockFeature(key, cost);
   if (key === "autoCount") createAutoToggleButton();
   if (key === "modeChange") createModeButton();
+  if (key === "eventResonance") createEventButton();
 };
 
 // 🔁 ページ読み込み時に再生成
@@ -177,4 +187,18 @@ window.addEventListener("load", () => {
   const f = JSON.parse(localStorage.getItem("features") || "{}");
   if (f.autoCount) createAutoToggleButton();
   if (f.modeChange) createModeButton();
+  if (f.eventResonance) createEventButton();
 });
+
+function createEventButton() {
+  if (document.getElementById("eventChangeBtn")) return;
+  const container = document.getElementById("eventToggleContainer");
+
+  const btn = document.createElement("button");
+  btn.id = "eventChangeBtn";
+  btn.textContent = "EVENT";
+  btn.classList.add("event-btn");
+  btn.addEventListener("click", openEventModal);
+
+  container.appendChild(btn);
+}

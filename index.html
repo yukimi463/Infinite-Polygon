@@ -39,6 +39,7 @@
   <div class="total-counter" id="totalCounter">所持金: 0</div>
   <div id="autoToggleContainer"></div>
   <div id="modeToggleContainer"></div>
+  <div id="eventToggleContainer"></div>
 
   <h1>Infinite Polygon</h1>
 
@@ -108,7 +109,7 @@
         <!-- オートカウント -->
         <div class="feature-item" id="feature-auto">
           <h3>オートカウント機能</h3>
-          <p>一定間隔で自動的にクリックします。</p>
+          <p>一定間隔で自動的にクリックするボタンを追加します。<p>(ON/OFF切り替え可)</p>
           <p class="cost">💰 解放コスト: 100</p>
           <button onclick="unlockFeature('autoCount', 100)">解放</button>
         </div>
@@ -132,15 +133,15 @@
         <!-- モード変更 -->
         <div class="feature-item" id="feature-mode">
           <h3>モード変更機能</h3>
-          <p>瞑想・加速など、特別なモードを切り替え可能にします。</p>
+          <p>瞑想・加速など、特別なモードに切り替えるボタンを追加します。</p>
           <p class="cost">💰 解放コスト: 10,000</p>
           <button onclick="unlockFeature('modeChange', 10000)">解放</button>
         </div>
 
         <!-- イベント -->
         <div class="feature-item" id="feature-event">
-          <h3>イベント機能</h3>
-          <p>頂点共鳴イベントなどの特別イベントを開放します。</p>
+          <h3>イベント解放機能</h3>
+          <p>イベント解放を行うボタンを追加します。</p>
           <p class="cost">💰 解放コスト: 100,000</p>
           <button onclick="unlockFeature('eventResonance', 100000)">解放</button>
         </div>
@@ -149,6 +150,38 @@
     </div>
   </div>
 
+  <!-- 🌌 イベントモーダル -->
+  <div id="eventModal" class="modal hidden">
+    <div class="modal-content">
+      <h2>🌠 イベント選択</h2>
+      <div class="feature-list">
+        <div class="feature-item">
+          <h3>頂点共鳴</h3>
+          <p>5秒に一度、流星群と共に多角形の頂点が光り輝きます<p>(輝く数は頂点数をMAXとしてランダムに選択されます)</p>
+          <button onclick="triggerVertexResonance()">発動</button>
+        </div>
+
+        <div class="feature-item">
+          <h3>虚空の共鳴</h3>
+          <p>1分間、頂点が共鳴しコイン効率が上昇します。</p>
+          <button onclick="triggerVertexResonance()">発動</button>
+        </div>
+
+        <div class="feature-item">
+          <h3>時空反転</h3>
+          <p>カウントを一時的に巻き戻して再構築します。</p>
+          <button onclick="triggerTimeReversal()">発動</button>
+        </div>
+
+        <div class="feature-item">
+          <h3>幾何の囁き</h3>
+          <p>一定時間クリック倍率が上昇します。</p>
+          <button onclick="triggerGeometryWhisper()">発動</button>
+        </div>
+      </div>
+      <button class="close-btn" onclick="closeEventModal()">閉じる</button>
+    </div>
+  </div>
 
   <!-- 💾 セーブ・ロードボタン -->
   <div style="margin-top:16px;">
@@ -169,6 +202,7 @@
 <script src="js/modeMeditation.js"></script>
 <script src="js/modeAcceleration.js"></script>
 <script src="js/modeController.js"></script>
+<script src="js/eventController.js"></script>
 <script src="js/unlock.js"></script> <!-- 👈 ここを modeController の後ろへ -->
 <script src="js/main.js"></script>
 

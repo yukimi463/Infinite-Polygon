@@ -222,3 +222,28 @@
   transform: scale(1.05);
   box-shadow: 0 0 12px rgba(155, 89, 182, 0.7);
 }
+
+/* 🧭 モード変更ボタン */
+#eventToggleContainer {
+  position: absolute;
+  top: 150px; /* MODEの下 */
+  right: 20px;
+  z-index: 100;
+}
+
+.event-btn {
+  background: linear-gradient(135deg, #1b3ac8, #186ce0);
+  border: none;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(142, 68, 173, 0.5);
+}
+
+.event-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(29, 92, 210, 0.7);
+}
