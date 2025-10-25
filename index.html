@@ -155,22 +155,25 @@
     <div class="modal-content">
       <h2>🌠 イベント選択</h2>
       <div class="feature-list">
-        <div class="feature-item">
+        <div class="feature-item" id="event-vertex">
           <h3>頂点共鳴</h3>
           <p>5秒に一度、流星群と共に多角形の頂点が光り輝きます<p>(輝く数は頂点数をMAXとしてランダムに選択されます)</p>
-          <button onclick="triggerVertexResonance()">発動</button>
+          <p class="cost">💰 解放コスト: 100,000</p>
+          <button onclick="unlockFeature('vertexResonance', 100000)">解放</button>
         </div>
 
-        <div class="feature-item">
+        <div class="feature-item" id="event-time">
           <h3>時空反転</h3>
           <p>カウントを一時的に巻き戻して再構築します。</p>
-          <button onclick="triggerTimeReversal()">発動</button>
+          <p class="cost">💰 解放コスト: 10,000,000</p>
+          <button onclick="unlockFeature('timeReversal', 10000000)">解放</button>
         </div>
 
-        <div class="feature-item">
+        <div class="feature-item" id="event-geometry">
           <h3>幾何の囁き</h3>
           <p>一定時間クリック倍率が上昇します。</p>
-          <button onclick="triggerGeometryWhisper()">発動</button>
+          <p class="cost">💰 解放コスト: 1,000,000,000</p>
+          <button onclick="unlockFeature('geometryWhisper', 100000000)">解放</button>
         </div>
       </div>
       <button class="close-btn" onclick="closeEventModal()">閉じる</button>

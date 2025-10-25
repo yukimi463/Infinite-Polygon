@@ -237,3 +237,43 @@
   0% { background-position: 0% 0%; }
   100% { background-position: 100% 100%; }
 }
+
+/* ================================
+   🌠 Event Modal — same base look
+   as unlock modal + cosmic bg
+================================ */
+
+/* EVENTモーダルのボタン：通常（未解放＝押せる） */
+#eventModal .feature-item button {
+  background: linear-gradient(135deg, #1b3ac8, #186ce0);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(29, 92, 210, 0.5);
+  transition: transform .12s ease, box-shadow .2s ease, opacity .2s ease;
+}
+#eventModal .feature-item button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px rgba(29, 92, 210, 0.7);
+}
+
+/* ✅ 解放済み（＝非活性）を機能解放モーダルと同じトーンで明確化 */
+#eventModal .feature-item button[disabled],
+#eventModal .feature-item button.unlocked {
+  opacity: 0.6;
+  filter: grayscale(60%);
+  cursor: not-allowed;
+  background: #999 !important;
+  color: #eee !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+#eventModal .feature-item button[disabled]:hover,
+#eventModal .feature-item button.unlocked:hover {
+  transform: none;
+  box-shadow: none;
+}
+

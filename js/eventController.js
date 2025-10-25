@@ -1,5 +1,6 @@
 function openEventModal() {
   document.getElementById("eventModal").classList.remove("hidden");
+  updateEventButtons();
   // updateEventModal();
 }
 

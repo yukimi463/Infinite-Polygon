@@ -59,12 +59,18 @@ function unlockFeature(key, cost) {
     return;
   }
 
+  // 💰 コスト消費と登録
   totalCount -= cost;
   window.features[key] = true;
   localStorage.setItem("features", JSON.stringify(window.features));
+
+  // 💬 カウンター更新
   document.getElementById("totalCounter").textContent =
-  `所持金: ${formatNumber(totalCount)}`;
+    `所持金: ${formatNumber(totalCount)}`;
+
+  // 🔁 機能・イベント両方のUIを更新
   updateUnlockButtons();
+  updateEventButtons();
 
   // ✅ 機能名を日本語に変換
   const featureNames = {
@@ -72,26 +78,18 @@ function unlockFeature(key, cost) {
     miniPolygon: "ミニ正多角形生成機能",
     rainbow: "虹色変色機能",
     modeChange: "モード変更機能",
-    eventResonance: "イベント機能"
+    eventResonance: "イベント機能",
+    vertexResonance: "頂点共鳴イベント",
+    voidResonance: "虚空の共鳴イベント",
+    timeReversal: "時空反転イベント",
+    geometryWhisper: "幾何の囁きイベント",
   };
 
   const name = featureNames[key] || key;
-
-  // ✅ 解放時の個別処理
-  if (key === "autoCount" && typeof createAutoToggleButton === "function") {
-    createAutoToggleButton();
-  }
-
-  if (key === "miniPolygon" && typeof checkMiniUnlock === "function") {
-    checkMiniUnlock();
-  }
-
-  if (key === "rainbow") {
-    createRainbowButton();
-  }
-
-  // ✅ 汎用メッセージ
   alert(`${name}を解放しました！`);
+
+  // ✅ 解放後の自動再生成など
+  if (key === "eventResonance") createEventButton();
 }
 
 // ===============================
@@ -116,6 +114,42 @@ function updateUnlockButtons() {
       el.style.opacity = 0.6;
     } else {
       btn.disabled = totalCount < parseInt(btn.getAttribute("onclick").match(/\d+/)[0]);
+    }
+  }
+}
+
+// ===============================
+// 🌌 イベントモーダル用ボタン更新（自動発動型）
+// ===============================
+function updateEventButtons() {
+  const features = window.features || {};
+  const map = {
+    vertexResonance: "event-vertex",
+    voidResonance: "event-void",
+    timeReversal: "event-time",
+    geometryWhisper: "event-geometry",
+  };
+
+  for (const key in map) {
+    const el = document.getElementById(map[key]);
+    if (!el) continue;
+    const btn = el.querySelector("button");
+    if (!btn) continue;
+
+    if (features[key]) {
+      // ✅ 解放済み → テキスト変更＋非活性＋見た目（unlockedクラス）
+      btn.textContent = "解放済み";
+      btn.disabled = true;
+      btn.classList.add("unlocked");
+      btn.classList.remove("locked");
+      el.style.opacity = 0.6;
+    } else {
+      // 🔒 未解放 → テキスト「解放」＋押せる
+      btn.textContent = "解放";
+      btn.disabled = false;
+      btn.classList.add("locked");
+      btn.classList.remove("unlocked");
+      el.style.opacity = 1.0;
     }
   }
 }
