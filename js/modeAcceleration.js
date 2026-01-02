@@ -84,6 +84,15 @@ window.startAccelerationExternally = function () {
   window.startAcceleration();
 };
 
+window.stopAccelerationExternally = function () {
+  // すでに通常なら何もしない（←これが超重要）
+  if (window.currentMode === "normal") return;
+
+  console.log("🧭 加速終了 → 通常モードへ");
+  window.currentMode = "normal";
+};
+
+
 function updateAccelerationDescription() {
   const base = 10;
   const bonus = accelEnergy;
